@@ -10,8 +10,9 @@
 
 class TextureManager {
 public:
-  static TextureManager& init() {
-    return instance_impl();
+  static bool init() {
+    instance_impl();
+    return true;
   };
 
   static TextureManager& instance() {

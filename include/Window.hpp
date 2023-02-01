@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_WINDOWMANAGER_HPP_
-#define _INCLUDE_WINDOWMANAGER_HPP_
+#ifndef _INCLUDE_WINDOW_HPP_
+#define _INCLUDE_WINDOW_HPP_
 
 #include <string>
 #include <stdexcept> // runtime_error
@@ -9,13 +9,14 @@
 
 // C++ singleton with arguments.
 // https://stackoverflow.com/a/52308483/8198710
-class WindowManager {
+class Window {
 public:
-  static WindowManager& init(std::string title = "") {
-    return instance_impl(&title);
+  static bool init(std::string title = "") {
+    instance_impl(title);
+    return true;
   };
 
-  static WindowManager& instance() {
+  static Window& instance() {
     return instance_impl();
   };
 
@@ -38,22 +39,20 @@ public:
     }
   };
 
-  WindowManager(WindowManager const&) = delete;
-  WindowManager& operator = (WindowManager const&) = delete;
+  Window(Window const&) = delete;
+  Window& operator = (Window const&) = delete;
 
 private:
-  std::string title;
   SDL_Window* window;
 
-  static WindowManager& instance_impl(std::string* const title = nullptr) {
-    static WindowManager instance{ title };
+  static Window& instance_impl(std::string title = "") {
+    static Window instance{ title };
     return instance;
   };
 
-  WindowManager(std::string* const title)
-  : title( title ? std::move(*title) : std::string{} ) {
+  Window(std::string title) {
     window = SDL_CreateWindow(
-      this->title.c_str(),
+      title.c_str(),
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
       // TODO: more arguments need pass by constructor.
@@ -63,7 +62,7 @@ private:
     );
 
     if (!window) {
-      throw std::runtime_error{ "WindowManager HAS FAILED TO CREATE WINDOW." };
+      throw std::runtime_error{ "Window HAS FAILED TO CREATE WINDOW." };
     }
   };
 };

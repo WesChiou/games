@@ -2,8 +2,10 @@
 
 #include <SDL2/SDL_image.h>
 
-#include "WindowManager.hpp"
-#include "RendererManager.hpp"
+#include "Window.hpp"
+#include "Renderer.hpp"
+#include "CustomEvent.hpp"
+#include "MouseListener.hpp"
 #include "TextureManager.hpp"
 #include "Game.hpp"
 
@@ -15,14 +17,28 @@ void Game::init(std::string title = "") {
 
   // Initialize SDL_image
   if (IMG_Init(IMG_INIT_PNG) == 0) {
-    throw std::runtime_error{ "IMG_Init HAS FAILURE." };
+    throw std::runtime_error{ "IMG_Init HAS FAILED." };
   }
 
-  WindowManager::init(title);
+  if (!Window::init(title)) {
+    throw std::runtime_error{ "Window::init() HAS FAILED." };
+  }
 
-  RendererManager::init(WindowManager::get_window());
+  if (!Renderer::init(Window::get_window())) {
+    throw std::runtime_error{ "Renderer::init() HAS FAILED." };
+  }
 
-  TextureManager::init();
+  if (!CustomEvent::init()) {
+    throw std::runtime_error{ "CustomEvent::init() HAS FAILED." };
+  }
+
+  if (!MouseListener::init()) {
+    throw std::runtime_error{ "MouseListener::init() HAS FAILED." };
+  }
+
+  if (!TextureManager::init()) {
+    throw std::runtime_error{ "TextureManager::init() HAS FAILED." };
+  }
 }
 
 void Game::start() {
@@ -54,11 +70,11 @@ void Game::pop_state() {
 }
 
 void Game::set_title(std::string title) {
-  WindowManager::set_title(title);
+  Window::set_title(title);
 }
 
 void Game::set_icon(std::string icon_path) {
-  WindowManager::set_icon(icon_path);
+  Window::set_icon(icon_path);
 }
 
 void Game::handle_events() {
@@ -87,7 +103,7 @@ void Game::update() {
 }
 
 void Game::draw() {
-  SDL_Renderer* renderer = RendererManager::get_renderer();
+  SDL_Renderer* renderer = Renderer::get_renderer();
 
   // Erase the last frame.
   SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -112,9 +128,13 @@ void Game::quit() {
   }
   states.clear();
 
-  WindowManager::cleanup();
+  Window::cleanup();
 
-  RendererManager::cleanup();
+  Renderer::cleanup();
+
+  CustomEvent::cleanup();
+
+  MouseListener::cleanup();
 
   TextureManager::cleanup();
 

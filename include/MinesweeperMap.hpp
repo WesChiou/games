@@ -19,6 +19,14 @@ public:
     set_map(rows, cols, mines);
   };
 
+  int get_rows() {
+    return rows;
+  };
+
+  int get_cols() {
+    return cols;
+  };
+
   const std::vector<std::vector<MinesweeperCell>>& get_cells() {
     return cells;
   };
