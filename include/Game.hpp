@@ -4,22 +4,23 @@
 #include <vector>
 #include <string>
 
-#include <SDL2/SDL_ttf.h>
-
-#include "IState.hpp"
+#include "State.hpp"
 
 class Game {
 public:
   void init(std::string title);
   void start();
 
-  void push_state(IState* state);
+  void push_state(State* state);
   void pop_state();
+
+  void set_title(std::string title);
+  void set_icon(std::string icon_path);
 
 private:
   bool running{false};
   int real_time_fps{0};
-  std::vector<IState*> states;
+  std::vector<State*> states;
 
   void handle_events();
   void update();

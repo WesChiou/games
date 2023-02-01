@@ -5,6 +5,7 @@
 #include <stdexcept> // runtime_error
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 // C++ singleton with arguments.
 // https://stackoverflow.com/a/52308483/8198710
@@ -26,6 +27,17 @@ public:
     return instance().window;
   };
 
+  static void set_title(std::string title) {
+    SDL_SetWindowTitle(instance().window, title.c_str());
+  };
+
+  static void set_icon(std::string icon_path) {
+    SDL_Surface* icon = IMG_Load(icon_path.c_str());
+    if (icon) {
+      SDL_SetWindowIcon(instance().window, icon);
+    }
+  };
+
   WindowManager(WindowManager const&) = delete;
   WindowManager& operator = (WindowManager const&) = delete;
 
@@ -44,7 +56,7 @@ private:
       this->title.c_str(),
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
-      // TODO: more arguments.
+      // TODO: more arguments need pass by constructor.
       640,
       520,
       0

@@ -1,7 +1,10 @@
 #include <stdexcept> // runtime_error
 
+#include <SDL2/SDL_image.h>
+
 #include "WindowManager.hpp"
 #include "RendererManager.hpp"
+#include "TextureManager.hpp"
 #include "Game.hpp"
 
 void Game::init(std::string title = "") {
@@ -10,9 +13,16 @@ void Game::init(std::string title = "") {
     throw std::runtime_error{ "SDL_Init HAS FAILED." };
   }
 
+  // Initialize SDL_image
+  if (IMG_Init(IMG_INIT_PNG) == 0) {
+    throw std::runtime_error{ "IMG_Init HAS FAILURE." };
+  }
+
   WindowManager::init(title);
 
   RendererManager::init(WindowManager::get_window());
+
+  TextureManager::init();
 }
 
 void Game::start() {
@@ -31,7 +41,7 @@ void Game::start() {
   }
 }
 
-void Game::push_state(IState* state) {
+void Game::push_state(State* state) {
   states.push_back(state);
   state->init();
 }
@@ -41,6 +51,14 @@ void Game::pop_state() {
 
   states.back()->cleanup();
   states.pop_back();
+}
+
+void Game::set_title(std::string title) {
+  WindowManager::set_title(title);
+}
+
+void Game::set_icon(std::string icon_path) {
+  WindowManager::set_icon(icon_path);
 }
 
 void Game::handle_events() {
@@ -53,7 +71,7 @@ void Game::handle_events() {
     }
 
     for (auto state: states) {
-      if (!state->sleep) {
+      if (!state->is_sleep()) {
         state->handle_event(&e);
       }
     }
@@ -62,7 +80,7 @@ void Game::handle_events() {
 
 void Game::update() {
   for (auto state: states) {
-    if (!state->pause) {
+    if (!state->is_pause()) {
       state->update();
     }
   }
@@ -76,7 +94,7 @@ void Game::draw() {
   SDL_RenderClear(renderer);
 
   for (auto state: states) {
-    if (!state->invisible) {
+    if (!state->is_invisible()) {
       state->draw();
     }
   }
@@ -98,5 +116,8 @@ void Game::quit() {
 
   RendererManager::cleanup();
 
+  TextureManager::cleanup();
+
+  IMG_Quit();
   SDL_Quit();
 }
