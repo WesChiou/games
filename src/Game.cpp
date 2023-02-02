@@ -86,6 +86,12 @@ void Game::handle_events() {
       return;
     }
 
+    // Forward SDL_MouseButtonEvent to MouseListener.
+    if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
+      MouseListener::listen(e.button);
+    }
+
+    // Forward event to each state.
     for (auto state: states) {
       if (!state->is_sleep()) {
         state->handle_event(&e);

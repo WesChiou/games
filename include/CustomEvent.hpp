@@ -18,7 +18,7 @@ public:
     return instance_impl();
   };
 
-  static void trigger(CustomEventCode code, void* data1);
+  static void trigger(CustomEventCode code, void* data1 = nullptr, void* data2 = nullptr);
 
   static void cleanup() {};
 

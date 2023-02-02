@@ -18,15 +18,18 @@ public:
 
   static void cleanup() {};
 
-  void listen(SDL_MouseButtonEvent* e) {
-    mouse_events.push(e);
+  static void listen(SDL_MouseButtonEvent e) {
+    MouseListener::instance().mouse_events.push(e);
+    on_listen();
   };
 
   MouseListener(MouseListener const&) = delete;
   MouseListener& operator = (MouseListener const&) = delete;
 
 private:
-  std::stack<SDL_MouseButtonEvent*> mouse_events;
+  std::stack<SDL_MouseButtonEvent> mouse_events;
+
+  static void on_listen();
 
   static MouseListener& instance_impl() {
     static MouseListener instance{};

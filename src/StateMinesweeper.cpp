@@ -1,9 +1,11 @@
+#include <iostream> // TODO: remove
+
 #include "StateMinesweeper.hpp"
 #include "Renderer.hpp"
 #include "TextureManager.hpp"
 #include "MinesweeperCell.hpp"
 #include "MinesweeperMark.hpp"
-#include <string>
+#include "CustomEvent.hpp"
 
 bool StateMinesweeper::init() {
   SDL_Renderer* renderer = Renderer::get_renderer();
@@ -13,6 +15,20 @@ bool StateMinesweeper::init() {
 }
 
 void StateMinesweeper::handle_event(SDL_Event* e) {
+  // Handle custom event first, because
+  // CustomEvent::type() connot be case value.
+  if (e->type == CustomEvent::type()) {
+    switch (e->user.code) {
+      case CUSTOMEVENT_MOUSE_CLICK:
+        on_click(e);
+        break;
+      default:
+        break;
+    }
+
+    return;
+  }
+
   switch (e->type) {
     case SDL_KEYDOWN:
       {
@@ -98,4 +114,15 @@ void StateMinesweeper::draw() {
 
 void StateMinesweeper::cleanup() {
 
+}
+
+void StateMinesweeper::on_click(SDL_Event* e) {
+  SDL_MouseButtonEvent* down = static_cast<SDL_MouseButtonEvent*>(e->user.data1);
+  SDL_MouseButtonEvent* up = static_cast<SDL_MouseButtonEvent*>(e->user.data2);
+
+  if (!down || !up) {
+    return;
+  }
+
+  std::cout << "TODO: on_click\n";
 }

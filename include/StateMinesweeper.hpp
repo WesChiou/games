@@ -56,6 +56,8 @@ private:
     { "count_7", { 103, 67, 16, 16 } },
     { "count_8", { 120, 67, 16, 16 } },
   };
+
+  void on_click(SDL_Event* e);
 };
 
 #endif
