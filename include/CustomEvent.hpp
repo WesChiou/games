@@ -2,6 +2,7 @@
 #define _INCLUDE_CUSTOMEVENT_HPP_
 
 #include <stdexcept> // runtime_error
+#include <cstdint>
 
 #include <SDL2/SDL.h>
 
@@ -18,7 +19,7 @@ public:
     return instance_impl();
   };
 
-  static void trigger(CustomEventCode code, void* data1 = nullptr, void* data2 = nullptr);
+  static void trigger(CustomEventCode code, void* data1, void* data2);
 
   static void cleanup() {};
 

@@ -2,7 +2,7 @@
 #define _INCLUDE_CUSTOMEVENTCODE_HPP_
 
 enum CustomEventCode {
-  CUSTOMEVENT_MOUSE_CLICK,
+  click,
 };
 
 #endif

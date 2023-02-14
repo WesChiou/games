@@ -54,6 +54,10 @@ void print_button(SDL_MouseButtonEvent e) {
   }
   std::cout << "state: " << e_state << "\n";
 
+  std::cout << "x: " << e.x << "\n";
+
+  std::cout << "y: " << e.y << "\n";
+
   std::cout << "clicks: " << static_cast<unsigned>(e.clicks) << "\n\n";
 }
 
@@ -66,7 +70,7 @@ void MouseListener::on_listen() {
 
   SDL_MouseButtonEvent top = stack.top();
 
-  // print_button(e);
+  // print_button(top);
 
   // Left mouse button released.
   if (top.button == SDL_BUTTON_LEFT && top.state == SDL_RELEASED) {
@@ -77,7 +81,9 @@ void MouseListener::on_listen() {
 
       // Left mouse button pressed.
       if (it.button == SDL_BUTTON_LEFT && it.state == SDL_PRESSED) {
-        CustomEvent::trigger(CUSTOMEVENT_MOUSE_CLICK, &it, &top);
+        SDL_Point* p1 = new SDL_Point{ it.x, it.y };
+        SDL_Point* p2 = new SDL_Point{ top.x, top.y };
+        CustomEvent::trigger(click, p1, p2);
         break;
       }
 

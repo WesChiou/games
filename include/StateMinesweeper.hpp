@@ -2,12 +2,14 @@
 #define _INCLUDE_STATEMINESWEEPER_HPP_
 
 #include <map>
+#include <vector>
 #include <string>
 
 #include <SDL2/SDL.h>
 
 #include "State.hpp"
 #include "MinesweeperMap.hpp"
+#include "GameObject.hpp"
 
 class StateMinesweeper: public State {
 public:
@@ -19,8 +21,8 @@ public:
 
 private:
   MinesweeperMap map{9, 12, 10};
-
-  std::map<std::string, SDL_Rect> tiles{
+  std::vector<GameObject> objects;
+  std::map<std::string, SDL_Rect> imgs{
     { "num_1", { 1, 1, 13, 23 } },
     { "num_2", { 15, 1, 13, 23 } },
     { "num_3", { 29, 1, 13, 23 } },
