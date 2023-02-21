@@ -11,15 +11,9 @@ public:
     std::cout << "StateTest init" << std::endl;
     return true;
   };
-  void handle_event(SDL_Event* e) {};
-  void update() {};
-  void draw(RendererHandle hrdr) {
-    auto renderer = hrdr.get();
-
-    SDL_Rect rect{ 10, 10, 100, 100 };
-    SDL_SetRenderDrawColor(renderer, 255, 67, 23, 255);
-    SDL_RenderDrawRect(renderer, &rect);
-  };
+  void handle_event(SDL_Event* event);
+  void update();
+  void draw(RendererHandle hrdr);
   void cleanup() {
     std::cout << "StateTest cleanup" << std::endl;
   };

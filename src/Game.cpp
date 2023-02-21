@@ -1,20 +1,25 @@
 #include <iostream>
 #include <memory>
 
+#include <SDL2/SDL.h>
+
 #include "Game.hpp"
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_render.h"
+#include "MouseClickEvent.hpp"
 
 Game::Game() {
   if (SDL_Init(0) != 0) {
     std::cerr << "SDL_Init has failed: " << SDL_GetError() << std::endl;
   }
+
+  init();
 }
 
 Game::Game(uint32_t flags) {
   if (SDL_Init(flags) != 0) {
     std::cerr << "SDL_Init has failed: " << SDL_GetError() << std::endl;
   }
+
+  init();
 }
 
 Game::~Game() {
@@ -114,24 +119,28 @@ void Game::remove_state(std::string name) {
   }
 }
 
-void Game::handle_events() {
-  SDL_Event e;
+void Game::init() {
+  event_handlers.emplace_back(std::make_unique<MouseClickEvent>());
+}
 
-  while (SDL_PollEvent(&e)) {
-    if (e.type == SDL_QUIT) {
+void Game::handle_events() {
+  SDL_Event event;
+
+  while (SDL_PollEvent(&event)) {
+    if (event.type == SDL_QUIT) {
       quit();
       return;
     }
 
-    // Forward SDL_MouseButtonEvent to MouseListener.
-    // if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
-    //   MouseListener::listen(e.button);
-    // }
+    // Forward event to each event handlers.
+    for (const auto& event_handler : event_handlers) {
+      event_handler->handle_event(&event);
+    }
 
     // Forward event to each state.
     for (const auto& pair : states) {
       if (!pair.second->is_sleep()) {
-        pair.second->handle_event(&e);
+        pair.second->handle_event(&event);
       }
     }
   }

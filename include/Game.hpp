@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 
 #include "Handle.hpp"
+#include "SDLEventHandler.hpp"
 #include "handles.hpp"
 #include "State.hpp"
 
@@ -29,7 +30,6 @@ public:
 
   // Set/Change a window's icon by SDL_SetWindowIcon() & SDL_LoadBMP();
   // NOTE: .bmp SUPPORTED ONLY.
-  // TODO: 任务栏不会出现 bmp 图标
   void set_window_icon(WindowHandle hwnd, const char *file);
 
   // Create a 2D rendering context for a window.
@@ -42,10 +42,13 @@ public:
   // Start the game loop.
   void start(RendererHandle hrdr);
 
+  // Push a state into game loop.
   void push_state(std::string name, std::unique_ptr<State> state);
 
+  // Pop the last state.
   void pop_state();
 
+  // Remove a state by its name.
   void remove_state(std::string name);
 
 private:
@@ -54,6 +57,9 @@ private:
 
   std::vector<std::pair<std::string, std::unique_ptr<State>>> states;
 
+  std::vector<std::unique_ptr<SDLEventHandler>> event_handlers;
+
+  void init();
   void handle_events();
   void update();
   void draw(RendererHandle hrdr);
