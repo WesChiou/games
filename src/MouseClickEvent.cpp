@@ -22,6 +22,7 @@ void MouseClickEvent::handle_mouse_button_event(SDL_MouseButtonEvent event) {
           left_down.reset();
         }
       }
+      break;
     case SDL_BUTTON_MIDDLE:
       {
         if (event.type == SDL_MOUSEBUTTONDOWN) {

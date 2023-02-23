@@ -10,9 +10,9 @@
 
 class Game;
 
-using HandleEventFunc = std::function<void (SDL_Event*)>;
-using UpdateFunc = std::function<void ()>;
-using DrawFunc = std::function<void (SDL_Renderer*)>;
+using HandleEventFunc = std::function<void (Game&, SDL_Event*)>;
+using UpdateFunc = std::function<void (Game&)>;
+using DrawFunc = std::function<void (Game&, SDL_Renderer*)>;
 
 struct StateInitOptions {
   HandleEventFunc on_handle_event;
@@ -35,13 +35,22 @@ public:
 
   virtual bool init() { return true; };
   virtual void handle_event(SDL_Event* event) {
-    if (on_handle_event) on_handle_event(event);
+    auto shared_game = game.lock();
+    if (on_handle_event && shared_game) {
+      on_handle_event(*shared_game, event);
+    }
   };
   virtual void update() {
-    if (on_update) on_update();
+    auto shared_game = game.lock();
+    if (on_update && shared_game) {
+      on_update(*shared_game);
+    }
   };
   virtual void draw(RendererHandle hrdr) {
-    if (on_draw) on_draw(hrdr.get());
+    auto shared_game = game.lock();
+    if (on_draw && shared_game) {
+      on_draw(*shared_game, hrdr.get());
+    }
   };
   virtual void cleanup() {};
 

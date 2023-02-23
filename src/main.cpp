@@ -36,18 +36,18 @@ int main(int argc, char *args[]) {
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
   StateInitOptions menu_options{
-    .on_handle_event = [&line1, &line2](SDL_Event* event) {
+    .on_handle_event = [&line1, &line2](Game& game, SDL_Event* event) {
       if (event->type == SDL_USEREVENT
         && event->user.code == (int)userevent::EventCode::mouse_click) {
         line1.on_click();
         line2.on_click();
       }
     },
-    .on_update = [&line1, &line2]() {
+    .on_update = [&line1, &line2](Game& game) {
       line1.update();
       line2.update();
     },
-    .on_draw = [&line1, &line2](SDL_Renderer *renderer) {
+    .on_draw = [&line1, &line2](Game& game, SDL_Renderer *renderer) {
       line1.draw(renderer);
       line2.draw(renderer);
     },
