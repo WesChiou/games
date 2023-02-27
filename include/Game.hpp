@@ -14,9 +14,9 @@
 
 class Game {
 public:
-  Game();
-  Game(uint32_t flags);
-  ~Game();
+  Game() {
+    init();
+  };
 
   // Create a window with the specified position, dimensions, and flags.
   // Params is same as SDL_CreateWindow()

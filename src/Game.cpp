@@ -6,26 +6,6 @@
 #include "Game.hpp"
 #include "MouseClickEvent.hpp"
 
-Game::Game() {
-  if (SDL_Init(0) != 0) {
-    std::cerr << "SDL_Init has failed: " << SDL_GetError() << std::endl;
-  }
-
-  init();
-}
-
-Game::Game(uint32_t flags) {
-  if (SDL_Init(flags) != 0) {
-    std::cerr << "SDL_Init has failed: " << SDL_GetError() << std::endl;
-  }
-
-  init();
-}
-
-Game::~Game() {
-  SDL_Quit();
-}
-
 WindowHandle Game::create_window(const char *title, int x, int y, int w, int h, uint32_t flags) {
   SDL_Window* pwnd = SDL_CreateWindow(title, x, y, w, h, flags);
   if (!pwnd) {

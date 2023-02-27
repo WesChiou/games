@@ -3,7 +3,7 @@
 
 #include "Game.hpp"
 #include "State.hpp"
-#include "userevent.hpp"
+#include "engine.hpp"
 
 struct Line {
   Line(int row): row(row) {};
@@ -22,6 +22,10 @@ struct Line {
 };
 
 int main(int argc, char *args[]) {
+  if (!engine::init(SDL_INIT_EVERYTHING, IMG_INIT_JPG | IMG_INIT_PNG)) {
+    return 1;
+  }
+
   Line line1(1);
   Line line2(21);
 
@@ -36,9 +40,12 @@ int main(int argc, char *args[]) {
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
   StateInitOptions menu_options{
+    .on_init = [](Game& game) {
+      std::cout << "menu init();" << std::endl;
+    },
     .on_handle_event = [&line1, &line2](Game& game, SDL_Event* event) {
       if (event->type == SDL_USEREVENT
-        && event->user.code == (int)userevent::EventCode::mouse_click) {
+        && event->user.code == (int)engine::UserEventCode::mouse_click) {
         line1.on_click();
         line2.on_click();
       }
@@ -51,12 +58,17 @@ int main(int argc, char *args[]) {
       line1.draw(renderer);
       line2.draw(renderer);
     },
+    .on_cleanup = [](Game& game) {
+      std::cout << "menu cleanup();" << std::endl;
+    }
   };
 
   auto menu = std::make_unique<State>(game, menu_options);
 
   game->push_state("menu", std::move(menu));
   game->start(hrdr);
+
+  engine::quit();
 
   return 0;
 }
