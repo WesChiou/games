@@ -1,7 +1,7 @@
 #include "StateMachine.hpp"
 #include "MouseClickEvent.hpp"
 
-void StateMachine::start(std::shared_ptr<SDL_Renderer> hrdr) {
+void StateMachine::start(HRDR hrdr) {
   running = true;
 
   while (running) {
@@ -82,7 +82,7 @@ void StateMachine::update() {
   }
 }
 
-void StateMachine::draw(std::shared_ptr<SDL_Renderer> hrdr) {
+void StateMachine::draw(HRDR hrdr) {
   auto renderer = hrdr.get();
 
   // Erase the last frame.

@@ -7,6 +7,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "handles.hpp"
+
 namespace engine {
   enum class UserEventCode {
     mouse_click,
@@ -20,24 +22,27 @@ namespace engine {
 
   // Create a window with the specified position, dimensions, and flags.
   // Params is same as SDL_CreateWindow()
-  std::shared_ptr<SDL_Window> create_window(const char *title, int x, int y, int w, int h, uint32_t flags);
+  HWND create_window(const char *title, int x, int y, int w, int h, uint32_t flags);
 
   // Destroy window by SDL_DestroyWindow()
-  void destroy_window(std::shared_ptr<SDL_Window> hwnd);
+  void destroy_window(HWND hwnd);
 
   // Set/Change a window's title by SDL_SetWindowTitle()
-  void set_window_title(std::shared_ptr<SDL_Window> hwnd, const char *title);
+  void set_window_title(HWND hwnd, const char *title);
 
   // Set/Change a window's icon by SDL_SetWindowIcon() & SDL_LoadBMP();
   // NOTE: .bmp SUPPORTED ONLY.
-  void set_window_icon(std::shared_ptr<SDL_Window> hwnd, const char *file);
+  void set_window_icon(HWND hwnd, const char *file);
 
   // Create a 2D rendering context for a window.
-  // Params is same as SDL_CreateRenderer(), except std::shared_ptr<SDL_Window> is used instead of SDL_Window*
-  std::shared_ptr<SDL_Renderer> create_renderer(std::shared_ptr<SDL_Window> hwnd, int index, uint32_t flags);
+  // Params is same as SDL_CreateRenderer(), except HWND is used instead of SDL_Window*
+  HRDR create_renderer(HWND hwnd, int index, uint32_t flags);
 
   // Destroy a renderer by SDL_DestroyRenderer()
-  void destroy_renderer(std::shared_ptr<SDL_Renderer> hrdr);
+  void destroy_renderer(HRDR hrdr);
+
+  // Create a SDL_Texture by IMG_LoadTexture()
+  HTEX create_texture(HRDR hrdr, const char *file);
 
   uint32_t register_userevent();
 

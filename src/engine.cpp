@@ -22,25 +22,25 @@ namespace engine {
     SDL_Quit();
   };
 
-  std::shared_ptr<SDL_Window> create_window(const char *title, int x, int y, int w, int h, uint32_t flags) {
+  HWND create_window(const char *title, int x, int y, int w, int h, uint32_t flags) {
     SDL_Window* window = SDL_CreateWindow(title, x, y, w, h, flags);
     if (!window) {
       throw std::runtime_error("SDL_CreateWindow has failed: " + std::string(SDL_GetError()));
     }
 
-    std::shared_ptr<SDL_Window> hwnd{ window, SDL_DestroyWindow };
+    HWND hwnd{ window, SDL_DestroyWindow };
     return hwnd;
   }
 
-  void destroy_window(std::shared_ptr<SDL_Window> hwnd) {
+  void destroy_window(HWND hwnd) {
     SDL_DestroyWindow(hwnd.get());
   }
 
-  void set_window_title(std::shared_ptr<SDL_Window> hwnd, const char *title) {
+  void set_window_title(HWND hwnd, const char *title) {
     SDL_SetWindowTitle(hwnd.get(), title);
   }
 
-  void set_window_icon(std::shared_ptr<SDL_Window> hwnd, const char *file) {
+  void set_window_icon(HWND hwnd, const char *file) {
     SDL_Surface* icon = SDL_LoadBMP(file);
     if (!icon) {
       std::cerr << "SDL_LoadBMP has failed: " << SDL_GetError() << std::endl;
@@ -51,18 +51,27 @@ namespace engine {
     SDL_FreeSurface(icon);
   }
 
-  std::shared_ptr<SDL_Renderer> create_renderer(std::shared_ptr<SDL_Window> hwnd, int index, uint32_t flags) {
+  HRDR create_renderer(HWND hwnd, int index, uint32_t flags) {
     SDL_Renderer* renderer = SDL_CreateRenderer(hwnd.get(), index, flags);
     if (!renderer) {
       throw std::runtime_error("SDL_CreateRenderer has failed: " + std::string(SDL_GetError()));
     }
 
-    std::shared_ptr<SDL_Renderer> hrdr{ renderer, SDL_DestroyRenderer };
+    HRDR hrdr{ renderer, SDL_DestroyRenderer };
     return hrdr;
   }
 
-  void destroy_renderer(std::shared_ptr<SDL_Renderer> hrdr) {
+  void destroy_renderer(HRDR hrdr) {
     SDL_DestroyRenderer(hrdr.get());
+  }
+
+  HTEX create_texture(HRDR hrdr, const char *file) {
+    auto p_texture = IMG_LoadTexture(hrdr.get(), "res/icon_16x16.bmp");
+    HTEX texture{ p_texture, SDL_DestroyTexture };
+    if (!p_texture) {
+      std::cerr << "IMG_LoadTexture has failed: " << SDL_GetError() << std::endl;
+    }
+    return texture;
   }
 
   uint32_t register_userevent() {

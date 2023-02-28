@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_GAME_HPP_
-#define _INCLUDE_GAME_HPP_
+#ifndef _INCLUDE_STATEMACHINE_HPP_
+#define _INCLUDE_STATEMACHINE_HPP_
 
 #include <vector>
 #include <memory>
@@ -9,6 +9,7 @@
 
 #include "State.hpp"
 #include "SDLEventHandler.hpp"
+#include "handles.hpp"
 
 class StateMachine {
 public:
@@ -17,7 +18,7 @@ public:
   };
 
   // Start the game loop.
-  void start(std::shared_ptr<SDL_Renderer> hrdr);
+  void start(HRDR hrdr);
 
   // Push a state into game loop.
   void push_state(std::string name, std::unique_ptr<State> state);
@@ -39,7 +40,7 @@ private:
   void init();
   void handle_events();
   void update();
-  void draw(std::shared_ptr<SDL_Renderer> hrdr);
+  void draw(HRDR hrdr);
   void quit();
 };
 

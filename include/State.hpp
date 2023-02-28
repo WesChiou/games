@@ -6,6 +6,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "handles.hpp"
+
 class StateMachine;
 
 using CommonFunc = std::function<void (StateMachine&)>;
@@ -58,7 +60,7 @@ public:
     }
   };
 
-  virtual void draw(std::shared_ptr<SDL_Renderer> hrdr) {
+  virtual void draw(HRDR hrdr) {
     auto sm_shared = sm.lock();
     if (on_draw && sm_shared) {
       on_draw(*sm_shared, hrdr.get());
