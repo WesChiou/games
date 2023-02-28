@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#include "Game.hpp"
+#include "StateMachine.hpp"
 #include "State.hpp"
 #include "engine.hpp"
 
@@ -29,44 +29,44 @@ int main(int argc, char *args[]) {
   Line line1(1);
   Line line2(21);
 
-  auto game = std::make_shared<Game>();
+  auto sm = std::make_shared<StateMachine>();
 
-  WindowHandle hwnd = game->create_window("Hello",
+  auto hwnd = engine::create_window("Hello",
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     300, 300, SDL_WINDOW_RESIZABLE);
-  game->set_window_icon(hwnd, "res/icon_16x16.bmp");
+  engine::set_window_icon(hwnd, "res/icon_16x16.bmp");
 
-  RendererHandle hrdr = game->create_renderer(hwnd, -1,
+  auto hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
   StateInitOptions menu_options{
-    .on_init = [](Game& game) {
+    .on_init = [](StateMachine& sm) {
       std::cout << "menu init();" << std::endl;
     },
-    .on_handle_event = [&line1, &line2](Game& game, SDL_Event* event) {
+    .on_handle_event = [&line1, &line2](StateMachine& sm, SDL_Event* event) {
       if (event->type == SDL_USEREVENT
         && event->user.code == (int)engine::UserEventCode::mouse_click) {
         line1.on_click();
         line2.on_click();
       }
     },
-    .on_update = [&line1, &line2](Game& game) {
+    .on_update = [&line1, &line2](StateMachine& sm) {
       line1.update();
       line2.update();
     },
-    .on_draw = [&line1, &line2](Game& game, SDL_Renderer *renderer) {
+    .on_draw = [&line1, &line2](StateMachine& sm, SDL_Renderer *renderer) {
       line1.draw(renderer);
       line2.draw(renderer);
     },
-    .on_cleanup = [](Game& game) {
+    .on_cleanup = [](StateMachine& sm) {
       std::cout << "menu cleanup();" << std::endl;
     }
   };
 
-  auto menu = std::make_unique<State>(game, menu_options);
+  auto menu = std::make_unique<State>(sm, menu_options);
 
-  game->push_state("menu", std::move(menu));
-  game->start(hrdr);
+  sm->push_state("menu", std::move(menu));
+  sm->start(hrdr);
 
   engine::quit();
 

@@ -22,6 +22,49 @@ namespace engine {
     SDL_Quit();
   };
 
+  std::shared_ptr<SDL_Window> create_window(const char *title, int x, int y, int w, int h, uint32_t flags) {
+    SDL_Window* window = SDL_CreateWindow(title, x, y, w, h, flags);
+    if (!window) {
+      throw std::runtime_error("SDL_CreateWindow has failed: " + std::string(SDL_GetError()));
+    }
+
+    std::shared_ptr<SDL_Window> hwnd{ window, SDL_DestroyWindow };
+    return hwnd;
+  }
+
+  void destroy_window(std::shared_ptr<SDL_Window> hwnd) {
+    SDL_DestroyWindow(hwnd.get());
+  }
+
+  void set_window_title(std::shared_ptr<SDL_Window> hwnd, const char *title) {
+    SDL_SetWindowTitle(hwnd.get(), title);
+  }
+
+  void set_window_icon(std::shared_ptr<SDL_Window> hwnd, const char *file) {
+    SDL_Surface* icon = SDL_LoadBMP(file);
+    if (!icon) {
+      std::cerr << "SDL_LoadBMP has failed: " << SDL_GetError() << std::endl;
+      return;
+    }
+
+    SDL_SetWindowIcon(hwnd.get(), icon);
+    SDL_FreeSurface(icon);
+  }
+
+  std::shared_ptr<SDL_Renderer> create_renderer(std::shared_ptr<SDL_Window> hwnd, int index, uint32_t flags) {
+    SDL_Renderer* renderer = SDL_CreateRenderer(hwnd.get(), index, flags);
+    if (!renderer) {
+      throw std::runtime_error("SDL_CreateRenderer has failed: " + std::string(SDL_GetError()));
+    }
+
+    std::shared_ptr<SDL_Renderer> hrdr{ renderer, SDL_DestroyRenderer };
+    return hrdr;
+  }
+
+  void destroy_renderer(std::shared_ptr<SDL_Renderer> hrdr) {
+    SDL_DestroyRenderer(hrdr.get());
+  }
+
   uint32_t register_userevent() {
     uint32_t type = SDL_RegisterEvents(1);
     if (type == (uint32_t) - 1) {

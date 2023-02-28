@@ -6,13 +6,11 @@
 
 #include <SDL2/SDL.h>
 
-#include "handles.hpp"
+class StateMachine;
 
-class Game;
-
-using CommonFunc = std::function<void (Game&)>;
-using HandleEventFunc = std::function<void (Game&, SDL_Event*)>;
-using DrawFunc = std::function<void (Game&, SDL_Renderer*)>;
+using CommonFunc = std::function<void (StateMachine&)>;
+using HandleEventFunc = std::function<void (StateMachine&, SDL_Event*)>;
+using DrawFunc = std::function<void (StateMachine&, SDL_Renderer*)>;
 
 struct StateInitOptions {
   CommonFunc on_init;
@@ -24,14 +22,14 @@ struct StateInitOptions {
 
 class State {
 public:
-  State(std::weak_ptr<Game> game) : game(game) {};
-  State(std::weak_ptr<Game> game, StateInitOptions options)
+  State(std::weak_ptr<StateMachine> sm) : sm(sm) {};
+  State(std::weak_ptr<StateMachine> sm, StateInitOptions options)
   : on_init(options.on_init)
   , on_handle_event(options.on_handle_event)
   , on_update(options.on_update)
   , on_draw(options.on_draw)
   , on_cleanup(options.on_cleanup)
-  , game(game) {};
+  , sm(sm) {};
 
   CommonFunc on_init;
   HandleEventFunc on_handle_event;
@@ -40,37 +38,37 @@ public:
   CommonFunc on_cleanup;
 
   virtual void init() {
-    auto shared_game = game.lock();
-    if (on_init && shared_game) {
-      on_init(*shared_game);
+    auto sm_shared = sm.lock();
+    if (on_init && sm_shared) {
+      on_init(*sm_shared);
     }
   };
 
   virtual void handle_event(SDL_Event* event) {
-    auto shared_game = game.lock();
-    if (on_handle_event && shared_game) {
-      on_handle_event(*shared_game, event);
+    auto sm_shared = sm.lock();
+    if (on_handle_event && sm_shared) {
+      on_handle_event(*sm_shared, event);
     }
   };
 
   virtual void update() {
-    auto shared_game = game.lock();
-    if (on_update && shared_game) {
-      on_update(*shared_game);
+    auto sm_shared = sm.lock();
+    if (on_update && sm_shared) {
+      on_update(*sm_shared);
     }
   };
 
-  virtual void draw(RendererHandle hrdr) {
-    auto shared_game = game.lock();
-    if (on_draw && shared_game) {
-      on_draw(*shared_game, hrdr.get());
+  virtual void draw(std::shared_ptr<SDL_Renderer> hrdr) {
+    auto sm_shared = sm.lock();
+    if (on_draw && sm_shared) {
+      on_draw(*sm_shared, hrdr.get());
     }
   };
 
   virtual void cleanup() {
-    auto shared_game = game.lock();
-    if (on_cleanup && shared_game) {
-      on_cleanup(*shared_game);
+    auto sm_shared = sm.lock();
+    if (on_cleanup && sm_shared) {
+      on_cleanup(*sm_shared);
     }
   };
 
@@ -84,11 +82,11 @@ public:
   void toggle_sleep(bool v) { sleep = v; };
 
 protected:
-  std::weak_ptr<Game> game;
+  std::weak_ptr<StateMachine> sm;
 
-  bool pause{false}; // update or not, using by Game
-  bool invisible{false}; // draw or not, using by Game
-  bool sleep{false}; // handle_event or not, using by Game
+  bool pause{false}; // update or not, using by StateMachine
+  bool invisible{false}; // draw or not, using by StateMachine
+  bool sleep{false}; // handle_event or not, using by StateMachine
 };
 
 #endif
