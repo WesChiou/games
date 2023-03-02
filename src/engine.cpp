@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 #include "engine.hpp"
 
@@ -65,13 +66,20 @@ namespace engine {
     SDL_DestroyRenderer(hrdr.get());
   }
 
-  HTEX create_texture(HRDR hrdr, const char *file) {
-    auto p_texture = IMG_LoadTexture(hrdr.get(), "res/icon_16x16.bmp");
-    HTEX texture{ p_texture, SDL_DestroyTexture };
-    if (!p_texture) {
-      std::cerr << "IMG_LoadTexture has failed: " << SDL_GetError() << std::endl;
+  HTEX create_texture(HRDR hrdr, const char* file) {
+    auto texture = IMG_LoadTexture(hrdr.get(), file);
+    HTEX htex{ texture, [file](SDL_Texture* t) {
+      if (t) {
+        SDL_DestroyTexture(t);
+        std::cout << "Texture `" << file << "` has been destroyed." << std::endl;
+      } else {
+        std::cerr << "Texture `" << file << "` not exist." << std::endl;
+      }
+    }};
+    if (!texture) {
+      throw std::runtime_error("IMG_LoadTexture has failed: " + std::string(SDL_GetError()));
     }
-    return texture;
+    return htex;
   }
 
   uint32_t register_userevent() {

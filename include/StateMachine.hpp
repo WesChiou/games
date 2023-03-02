@@ -9,7 +9,7 @@
 
 #include "State.hpp"
 #include "SDLEventHandler.hpp"
-#include "handles.hpp"
+#include "alias.hpp"
 
 class StateMachine {
 public:

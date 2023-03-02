@@ -6,7 +6,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "handles.hpp"
+#include "alias.hpp"
 
 class StateMachine;
 

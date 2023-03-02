@@ -54,6 +54,8 @@ void StateMachine::init() {
 void StateMachine::handle_events() {
   SDL_Event event;
 
+  SDL_StopTextInput();
+
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
       quit();

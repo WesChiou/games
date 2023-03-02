@@ -1,9 +1,10 @@
 #include <iostream>
 #include <memory>
 
-#include "StateMachine.hpp"
+#include "Sprite.hpp"
 #include "State.hpp"
-#include "handles.hpp"
+#include "StateMachine.hpp"
+#include "alias.hpp"
 #include "engine.hpp"
 
 int main(int argc, char *args[]) {
@@ -21,19 +22,46 @@ int main(int argc, char *args[]) {
   auto hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
-  auto image = engine::create_texture(hrdr, "res/icon_16x16.bmp");
-  SDL_Rect srcrect{ 0, 0, 16, 16 };
-  SDL_Rect dstrect{ 0, 0, 16, 16 };
+  auto test_htex = engine::create_texture(hrdr, "res/Minesweepertiles-windows3.1mexpwep.png");
+
+  Sprite test_sprite{{ test_htex, { 0, 0, 16, 32 } }};
 
   StateInitOptions world_state_options{
     .on_init = [](StateMachine& sm) {
       std::cout << "menu init();" << std::endl;
     },
 
-    .on_handle_event = [](StateMachine& sm, SDL_Event* event) {
-      if (event->type == SDL_USEREVENT
-        && event->user.code == (int)engine::UserEventCode::mouse_click) {
-        std::cout << "clicked" << std::endl;
+    .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
+      if (event->type == SDL_USEREVENT) {
+        if (event->user.code == (int)engine::UserEventCode::mouse_click) {
+          std::cout << "clicked" << std::endl;
+        }
+        return;
+      }
+
+      switch (event->type) {
+        case SDL_KEYDOWN:
+          {
+            switch (event->key.keysym.sym) {
+              case SDLK_UP:
+                test_sprite.position.y -= 16;
+                break;
+              case SDLK_RIGHT:
+                test_sprite.position.x += 16;
+                break;
+              case SDLK_DOWN:
+                test_sprite.position.y += 16;
+                break;
+              case SDLK_LEFT:
+                test_sprite.position.x -= 16;
+                break;
+              default:
+                break;
+            }
+          }
+          break;
+        default:
+          break;
       }
     },
 
@@ -42,7 +70,7 @@ int main(int argc, char *args[]) {
     },
 
     .on_draw = [&](StateMachine& sm, SDL_Renderer *renderer) {
-      SDL_RenderCopy(renderer, image.get(), &srcrect, &dstrect);
+      test_sprite.draw(hrdr, true);
     },
 
     .on_cleanup = [](StateMachine& sm) {
