@@ -7,11 +7,7 @@
 #include "alias.hpp"
 #include "engine.hpp"
 
-int main(int argc, char *args[]) {
-  if (!engine::init(SDL_INIT_EVERYTHING, IMG_INIT_JPG | IMG_INIT_PNG)) {
-    return 1;
-  }
-
+void game() {
   auto sm = std::make_shared<StateMachine>();
 
   auto hwnd = engine::create_window("Hello",
@@ -22,9 +18,10 @@ int main(int argc, char *args[]) {
   auto hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
-  auto test_htex = engine::create_texture(hrdr, "res/Minesweepertiles-windows3.1mexpwep.png");
-
-  Sprite test_sprite{{ test_htex, { 0, 0, 16, 32 } }};
+  auto hfont = engine::open_font("res/SmileySans-Oblique.ttf", 16);
+  auto text = engine::create_texture(hrdr, hfont, "Welcome to china! 你好，欢迎来到中国！", { 0, 0, 0, 255 }, 100);
+  engine::close_font(hfont);
+  Sprite test_sprite{{ text }};
 
   StateInitOptions world_state_options{
     .on_init = [](StateMachine& sm) {
@@ -82,7 +79,13 @@ int main(int argc, char *args[]) {
 
   sm->push_state("world", std::move(world_state));
   sm->start(hrdr);
+}
 
+int main(int argc, char *args[]) {
+  if (engine::init(SDL_INIT_EVERYTHING, IMG_INIT_JPG | IMG_INIT_PNG)) {
+    game();
+  }
+  // TODO: 除了将游戏逻辑完全封装在 game() 函数中以外，怎样消除这里的时间耦合？
   engine::quit();
 
   return 0;

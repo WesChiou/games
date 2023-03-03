@@ -15,10 +15,16 @@ namespace engine {
       return false;
     }
 
+    if (TTF_Init() != 0) {
+      std::cerr << "TTF_Init has failed: " << TTF_GetError() << std::endl;
+      return false;
+    }
+
     return true;
   };
 
   void quit() {
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
   };
@@ -34,14 +40,18 @@ namespace engine {
   }
 
   void destroy_window(HWND hwnd) {
-    SDL_DestroyWindow(hwnd.get());
+    hwnd.reset();
   }
 
   void set_window_title(HWND hwnd, const char *title) {
+    if (!hwnd) return;
+
     SDL_SetWindowTitle(hwnd.get(), title);
   }
 
   void set_window_icon(HWND hwnd, const char *file) {
+    if (!hwnd) return;
+
     SDL_Surface* icon = SDL_LoadBMP(file);
     if (!icon) {
       std::cerr << "SDL_LoadBMP has failed: " << SDL_GetError() << std::endl;
@@ -53,6 +63,8 @@ namespace engine {
   }
 
   HRDR create_renderer(HWND hwnd, int index, uint32_t flags) {
+    if (!hwnd) return nullptr;
+
     SDL_Renderer* renderer = SDL_CreateRenderer(hwnd.get(), index, flags);
     if (!renderer) {
       throw std::runtime_error("SDL_CreateRenderer has failed: " + std::string(SDL_GetError()));
@@ -63,23 +75,51 @@ namespace engine {
   }
 
   void destroy_renderer(HRDR hrdr) {
-    SDL_DestroyRenderer(hrdr.get());
+    hrdr.reset();
   }
 
   HTEX create_texture(HRDR hrdr, const char* file) {
-    auto texture = IMG_LoadTexture(hrdr.get(), file);
-    HTEX htex{ texture, [file](SDL_Texture* t) {
-      if (t) {
-        SDL_DestroyTexture(t);
-        std::cout << "Texture `" << file << "` has been destroyed." << std::endl;
-      } else {
-        std::cerr << "Texture `" << file << "` not exist." << std::endl;
-      }
-    }};
+    if (!hrdr) return nullptr;
+
+    SDL_Texture* texture = IMG_LoadTexture(hrdr.get(), file);
     if (!texture) {
       throw std::runtime_error("IMG_LoadTexture has failed: " + std::string(SDL_GetError()));
     }
+
+    HTEX htex{ texture, SDL_DestroyTexture };
     return htex;
+  }
+
+  HTEX create_texture(HRDR hrdr, HFONT hfont, const char* text, Color fg, uint32_t wrap_length) {
+    if (!hrdr) return nullptr;
+
+    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(hfont.get(), text, fg, wrap_length);
+    if (!surface) {
+      throw std::runtime_error("TTF_RenderUTF8_Blended_Wrapped has failed: " + std::string(TTF_GetError()));
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(hrdr.get(), surface);
+    SDL_FreeSurface(surface);
+    if (!texture) {
+      throw std::runtime_error("SDL_CreateTextureFromSurface has failed: " + std::string(SDL_GetError()));
+    }
+
+    HTEX htex{ texture, SDL_DestroyTexture };
+    return htex;
+  }
+
+  HFONT open_font(const char* file, int ptsize) {
+    TTF_Font* font = TTF_OpenFont(file, ptsize);
+    if (!font) {
+      throw std::runtime_error("TTF_OpenFont has failed: " + std::string(TTF_GetError()));
+    }
+
+    HFONT hfont { font, TTF_CloseFont };
+    return hfont;
+  }
+
+  void close_font(HFONT hfont) {
+    hfont.reset();
   }
 
   uint32_t register_userevent() {
