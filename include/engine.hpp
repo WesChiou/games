@@ -28,11 +28,13 @@ namespace engine {
   // Destroy a window by SDL_DestroyWindow() manually.
   void destroy_window(HWND hwnd);
 
+  // Set/Change a window's size by SDL_SetWindowSize().
+  void set_window_size(HWND hwnd, int w, int h);
+
   // Set/Change a window's title by SDL_SetWindowTitle().
   void set_window_title(HWND hwnd, const char *title);
 
-  // Set/Change a window's icon by SDL_SetWindowIcon() & SDL_LoadBMP();
-  // NOTE: .bmp SUPPORTED ONLY.
+  // Set/Change a window's icon by SDL_SetWindowIcon().
   void set_window_icon(HWND hwnd, const char *file);
 
   // Create a 2D rendering context for a window.

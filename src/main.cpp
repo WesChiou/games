@@ -85,7 +85,6 @@ int main(int argc, char *args[]) {
   if (engine::init(SDL_INIT_EVERYTHING, IMG_INIT_JPG | IMG_INIT_PNG)) {
     game();
   }
-  // TODO: 除了将游戏逻辑完全封装在 game() 函数中以外，怎样消除这里的时间耦合？
   engine::quit();
 
   return 0;

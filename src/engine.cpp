@@ -43,6 +43,12 @@ namespace engine {
     hwnd.reset();
   }
 
+  void set_window_size(HWND hwnd, int w, int h) {
+    if (!hwnd) return;
+
+    SDL_SetWindowSize(hwnd.get(), w, h);
+  }
+
   void set_window_title(HWND hwnd, const char *title) {
     if (!hwnd) return;
 
@@ -52,9 +58,9 @@ namespace engine {
   void set_window_icon(HWND hwnd, const char *file) {
     if (!hwnd) return;
 
-    SDL_Surface* icon = SDL_LoadBMP(file);
+    SDL_Surface* icon = IMG_Load(file);
     if (!icon) {
-      std::cerr << "SDL_LoadBMP has failed: " << SDL_GetError() << std::endl;
+      std::cerr << "IMG_Load has failed: " << SDL_GetError() << std::endl;
       return;
     }
 
