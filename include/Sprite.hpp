@@ -7,7 +7,7 @@
 class Sprite {
 public:
   Sprite(TextureRegion tex_rgn)
-  : width(tex_rgn.region.w), height(tex_rgn.region.h), texture_region(tex_rgn) {};
+  : width(tex_rgn.get_w()), height(tex_rgn.get_h()), texture_region(tex_rgn) {};
 
   Point position{ 0, 0 };
   int width{ 0 };
@@ -30,9 +30,9 @@ public:
   };
 
   void draw(HRDR hrdr, bool show_position = false) {
-    if (!hrdr || !texture_region.htex) return;
+    if (!hrdr || !texture_region.get_texture()) return;
 
-    SDL_RenderCopy(hrdr.get(), texture_region.htex.get(), &texture_region.region, &get_bounding_box());
+    SDL_RenderCopy(hrdr.get(), texture_region.get_texture(), &texture_region.get_region(), &get_bounding_box());
 
     if (show_position) {
       SDL_SetRenderDrawColor(hrdr.get(), 255, 0, 0, 255);

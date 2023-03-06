@@ -18,7 +18,19 @@ public:
 
   TextureRegion(HTEX htex, Rect region) : htex(htex), region(region) {};
 
-  HTEX htex{ nullptr };
+  SDL_Texture* get_texture() { return htex.get(); };
+
+  const Rect& get_region() const { return region; };
+
+  int get_x() const { return region.x; };
+  int get_y() const { return region.y; };
+  int get_w() const { return region.w; };
+  int get_h() const { return region.h; };
+
+  void set_region(Rect new_region) { region = new_region; };
+
+private:
+  HTEX htex{};
   Rect region{ 0, 0, 0, 0 }; // pick a rectangle region in texture
 };
 

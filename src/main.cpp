@@ -21,7 +21,8 @@ void game() {
   auto hfont = engine::open_font("res/SmileySans-Oblique.ttf", 16);
   auto text = engine::create_texture(hrdr, hfont, "Welcome to china! 你好，欢迎来到中国！", { 0, 0, 0, 255 }, 100);
   engine::close_font(hfont);
-  Sprite test_sprite{{ text }};
+  Sprite msg{{ text }};
+  msg.set_anchor_point(0.5, 0.5);
 
   StateInitOptions world_state_options{
     .on_init = [](StateMachine& sm) {
@@ -41,16 +42,16 @@ void game() {
           {
             switch (event->key.keysym.sym) {
               case SDLK_UP:
-                test_sprite.position.y -= 16;
+                msg.position.y -= 16;
                 break;
               case SDLK_RIGHT:
-                test_sprite.position.x += 16;
+                msg.position.x += 16;
                 break;
               case SDLK_DOWN:
-                test_sprite.position.y += 16;
+                msg.position.y += 16;
                 break;
               case SDLK_LEFT:
-                test_sprite.position.x -= 16;
+                msg.position.x -= 16;
                 break;
               default:
                 break;
@@ -67,7 +68,7 @@ void game() {
     },
 
     .on_draw = [&](StateMachine& sm, SDL_Renderer *renderer) {
-      test_sprite.draw(hrdr, true);
+      msg.draw(hrdr, true);
     },
 
     .on_cleanup = [](StateMachine& sm) {
