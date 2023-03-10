@@ -15,16 +15,21 @@ namespace engine {
       return false;
     }
 
+    #ifdef USE_SDL_TTF
     if (TTF_Init() != 0) {
       std::cerr << "TTF_Init has failed: " << TTF_GetError() << std::endl;
       return false;
     }
+    #endif
 
     return true;
   };
 
   void quit() {
+    #ifdef USE_SDL_TTF
     TTF_Quit();
+    #endif
+
     IMG_Quit();
     SDL_Quit();
   };
@@ -96,6 +101,7 @@ namespace engine {
     return htex;
   }
 
+  #ifdef USE_SDL_TTF
   HTEX create_texture(HRDR hrdr, HFONT hfont, const char* text, Color fg, uint32_t wrap_length) {
     if (!hrdr) return nullptr;
 
@@ -127,6 +133,7 @@ namespace engine {
   void close_font(HFONT hfont) {
     hfont.reset();
   }
+  #endif
 
   uint32_t register_userevent() {
     uint32_t type = SDL_RegisterEvents(1);

@@ -18,9 +18,8 @@ void game() {
   auto hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
-  auto hfont = engine::open_font("res/SmileySans-Oblique.ttf", 16);
-  auto text = engine::create_texture(hrdr, hfont, "Welcome to china! 你好，欢迎来到中国！", { 0, 0, 0, 255 }, 100);
-  engine::close_font(hfont);
+  // auto hfont = engine::open_font("res/SmileySans-Oblique.ttf", 16);
+  auto text = engine::create_texture(hrdr, "res/icon_16x16.bmp");
   Sprite msg{{ text }};
   msg.set_anchor_point(0.5, 0.5);
 

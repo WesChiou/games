@@ -6,7 +6,10 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+
+#ifdef USE_SDL_TTF
 #include <SDL2/SDL_ttf.h>
+#endif
 
 #include "alias.hpp"
 
@@ -47,6 +50,7 @@ namespace engine {
   // Create a SDL_Texture by IMG_LoadTexture().
   HTEX create_texture(HRDR hrdr, const char* file);
 
+  #ifdef USE_SDL_TTF
   // Create a SDL_Texture by SDL_ttf from given font.
   HTEX create_texture(HRDR hrdr, HFONT hfont, const char* text, Color fg, uint32_t wrap_length);
 
@@ -55,6 +59,7 @@ namespace engine {
 
   // Close a font by TTF_CloseFont() manually.
   void close_font(HFONT hfont);
+  #endif
 
   uint32_t register_userevent();
 
