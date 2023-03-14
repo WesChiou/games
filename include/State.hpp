@@ -7,6 +7,7 @@
 #include <SDL2/SDL.h>
 
 #include "alias.hpp"
+#include "Scene.hpp"
 
 class StateMachine;
 
@@ -39,39 +40,43 @@ public:
   DrawFunc on_draw;
   CommonFunc on_cleanup;
 
-  virtual void init() {
+  void init() {
     auto sm_shared = sm.lock();
     if (on_init && sm_shared) {
       on_init(*sm_shared);
     }
   };
 
-  virtual void handle_event(SDL_Event* event) {
+  void handle_event(SDL_Event* event) {
     auto sm_shared = sm.lock();
     if (on_handle_event && sm_shared) {
       on_handle_event(*sm_shared, event);
     }
   };
 
-  virtual void update() {
+  void update() {
     auto sm_shared = sm.lock();
     if (on_update && sm_shared) {
       on_update(*sm_shared);
     }
   };
 
-  virtual void draw(HRDR hrdr) {
+  void draw(HRDR hrdr) {
     auto sm_shared = sm.lock();
     if (on_draw && sm_shared) {
       on_draw(*sm_shared, hrdr.get());
     }
   };
 
-  virtual void cleanup() {
+  void cleanup() {
     auto sm_shared = sm.lock();
     if (on_cleanup && sm_shared) {
       on_cleanup(*sm_shared);
     }
+  };
+
+  void set_scene(std::shared_ptr<Scene> scene) {
+    this->scene = scene;
   };
 
   bool is_pause() { return pause; };
@@ -85,6 +90,7 @@ public:
 
 protected:
   std::weak_ptr<StateMachine> sm;
+  std::shared_ptr<Scene> scene;
 
   bool pause{false}; // update or not, using by StateMachine
   bool invisible{false}; // draw or not, using by StateMachine
