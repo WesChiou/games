@@ -20,6 +20,10 @@ public:
     children.emplace_back(std::move(child));
   };
 
+  const std::vector<std::unique_ptr<Object>>& get_children() const {
+    return children;
+  };
+
   // The x, y, w, and h can specify a rectangle relative to a scene.
   int x{0};
   int y{0};

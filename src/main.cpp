@@ -1,18 +1,17 @@
+// Copyright 2023 Qiu Weishi
+
 #include <iostream>
 #include <memory>
-
-#include "SDL2/SDL_render.h"
-#include "Sprite.hpp"
-#include "Material.hpp"
-#include "Object.hpp"
-#include "Scene.hpp"
-#include "Camera.hpp"
-#include "Viewport.hpp"
-#include "Renderer.hpp"
-#include "State.hpp"
-#include "StateMachine.hpp"
-#include "alias.hpp"
-#include "engine.hpp"
+#include "../include/Sprite.hpp"
+#include "../include/Material.hpp"
+#include "../include/Object.hpp"
+#include "../include/Scene.hpp"
+#include "../include/Camera.hpp"
+#include "../include/Renderer.hpp"
+#include "../include/State.hpp"
+#include "../include/StateMachine.hpp"
+#include "../include/alias.hpp"
+#include "../include/engine.hpp"
 
 void game() {
   auto sm = std::make_shared<StateMachine>();
@@ -37,7 +36,8 @@ void game() {
 
     .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
       if (event->type == SDL_USEREVENT) {
-        if (event->user.code == (int)engine::UserEventCode::mouse_click) {
+        if (event->user.code == static_cast<int>(
+          engine::UserEventCode::mouse_click)) {
           std::cout << "clicked" << std::endl;
         }
         return;
@@ -70,7 +70,6 @@ void game() {
     },
 
     .on_update = [](StateMachine& sm) {
-
     },
 
     .on_draw = [&](StateMachine& sm, SDL_Renderer *renderer) {
@@ -91,40 +90,33 @@ void game() {
 void game_no_statemachine() {
   auto hwnd = engine::create_window("Hello",
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    700, 400, SDL_WINDOW_RESIZABLE);
+    400, 400, SDL_WINDOW_RESIZABLE);
   engine::set_window_icon(hwnd, "res/icon_16x16.bmp");
 
   auto hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
-  auto tex_qrcode = engine::create_texture(hrdr, "res/bg.png");
-  TextureRegion tex_rgn_qrcode{tex_qrcode};
+  auto o4 = std::make_unique<Object>(60, 60, 30, 30);
+  o4->material = Material{{200, 200, 200, 255}};
+
+  auto o3 = std::make_unique<Object>(10, 10, 60, 60);
+  o3->material = Material{{120, 50, 250, 255}};
+  o3->add(std::move(o4));
+
+  auto o2 = std::make_unique<Object>(10, 10, 80, 80);
+  o2->material = Material{{250, 50, 20, 255}};
+  o2->add(std::move(o3));
+
+  auto o1 = std::make_unique<Object>(10, 10, 100, 100);
+  o1->material = Material{{120, 50, 20, 255}};
+  o1->add(std::move(o2));
 
   Scene scene{};
-  // auto o0 = std::make_unique<Object>(0, 0, 100, 80);
-  // o0->material = Material{tex_rgn_qrcode};
-  auto o1 = std::make_unique<Object>(0, 0, 100, 80);
-  o1->material = Material{{120, 50, 20, 255}};
-  auto o2 = std::make_unique<Object>(0, 100, 100, 80);
-  o2->material = Material{{250, 50, 20, 255}};
-  auto o3 = std::make_unique<Object>(100, 50, 100, 80);
-  o3->material = Material{{120, 50, 250, 255}};
-  auto o4 = std::make_unique<Object>(225, 175, 50, 50);
-  o4->material = Material{{200, 200, 200, 255}};
-  // scene.add(std::move(o0));
   scene.add(std::move(o1));
-  scene.add(std::move(o2));
-  scene.add(std::move(o3));
-  scene.add(std::move(o4));
 
   Camera camera{0, 0, 200, 200};
-
-  Viewport viewport{0, 0, 300, 200};
-  viewport.set_renderer(hrdr);
-  Viewport viewport2{350, 0, 300, 400};
-  viewport2.set_renderer(hrdr);
-
-  Renderer renderer{};
+  Rect viewport{0, 0, 400, 400};
+  Renderer renderer{hrdr};
 
   bool running = true;
   while (running) {
@@ -165,11 +157,10 @@ void game_no_statemachine() {
     // update
 
     // Erase the last frame.
-    SDL_SetRenderDrawColor(hrdr.get(), 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(hrdr.get(), 0, 0, 0, 255);
     SDL_RenderClear(hrdr.get());
     // Draw
-    renderer.render(scene, camera, viewport);
-    renderer.render(scene, camera, viewport2);
+    renderer.render(scene, camera, &viewport);
     // Render the current frame.
     SDL_RenderPresent(hrdr.get());
   }
