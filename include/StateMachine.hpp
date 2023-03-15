@@ -1,21 +1,20 @@
-#ifndef _INCLUDE_STATEMACHINE_HPP_
-#define _INCLUDE_STATEMACHINE_HPP_
+#ifndef INCLUDE_STATEMACHINE_HPP_
+#define INCLUDE_STATEMACHINE_HPP_
 
+#include <SDL2/SDL.h>
 #include <vector>
 #include <memory>
 #include <string>
-
-#include <SDL2/SDL.h>
-
-#include "State.hpp"
-#include "SDLEventHandler.hpp"
-#include "alias.hpp"
+#include <utility>
+#include "./alias.hpp"
+#include "./State.hpp"
+#include "./SDLEventHandler.hpp"
 
 class StateMachine {
 public:
   StateMachine() {
     init();
-  };
+  }
 
   // Start the game loop.
   void start(HRDR hrdr);
@@ -44,4 +43,4 @@ private:
   void quit();
 };
 
-#endif
+#endif  // INCLUDE_STATEMACHINE_HPP_

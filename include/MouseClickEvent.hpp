@@ -1,13 +1,12 @@
-#ifndef _INCLUDE_MOUSECLICKEVENT_HPP_
-#define _INCLUDE_MOUSECLICKEVENT_HPP_
+#ifndef INCLUDE_MOUSECLICKEVENT_HPP_
+#define INCLUDE_MOUSECLICKEVENT_HPP_
 
 #include <memory>
-
-#include "SDLEventHandler.hpp"
+#include "./SDLEventHandler.hpp"
 
 class MouseClickEvent : public SDLEventHandler {
 public:
-  ~MouseClickEvent() {};
+  ~MouseClickEvent() {}
   void handle_event(SDL_Event *event) override;
 
 private:
@@ -18,4 +17,4 @@ private:
   void handle_mouse_button_event(SDL_MouseButtonEvent event);
 };
 
-#endif
+#endif  // INCLUDE_MOUSECLICKEVENT_HPP_

@@ -1,8 +1,5 @@
-#ifndef _INCLUDE_EVENT_HPP_
-#define _INCLUDE_EVENT_HPP_
-
-#include <cstdint>
-#include <memory>
+#ifndef INCLUDE_ENGINE_HPP_
+#define INCLUDE_ENGINE_HPP_
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -11,7 +8,7 @@
 #include <SDL2/SDL_ttf.h>
 #endif
 
-#include "alias.hpp"
+#include "./alias.hpp"
 
 namespace engine {
   enum class UserEventCode {
@@ -41,7 +38,8 @@ namespace engine {
   void set_window_icon(HWND hwnd, const char *file);
 
   // Create a 2D rendering context for a window.
-  // Params is same as SDL_CreateRenderer(), except HWND is used instead of SDL_Window*.
+  // Params is same as SDL_CreateRenderer(),
+  // except HWND is used instead of SDL_Window*.
   HRDR create_renderer(HWND hwnd, int index, uint32_t flags);
 
   // Destroy a renderer by SDL_DestroyRenderer() manually.
@@ -66,6 +64,6 @@ namespace engine {
   uint32_t get_registered_type();
 
   void trigger_userevent(UserEventCode code, void* data1, void* data2);
-}
+}  // namespace engine
 
-#endif
+#endif  // INCLUDE_ENGINE_HPP_

@@ -1,13 +1,13 @@
-#ifndef _INCLUDE_ALIAS_HPP_
-#define _INCLUDE_ALIAS_HPP_
-
-#include <memory>
+#ifndef INCLUDE_ALIAS_HPP_
+#define INCLUDE_ALIAS_HPP_
 
 #include <SDL2/SDL.h>
 
 #ifdef USE_SDL_TTF
 #include <SDL2/SDL_ttf.h>
 #endif
+
+#include <memory>
 
 using HWND = std::shared_ptr<SDL_Window>;
 using HRDR = std::shared_ptr<SDL_Renderer>;
@@ -23,4 +23,4 @@ using Point = SDL_Point;
 using FPoint = SDL_FPoint;
 using Color = SDL_Color;
 
-#endif
+#endif  // INCLUDE_ALIAS_HPP_

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdexcept>
-
-#include "engine.hpp"
+#include "../include/engine.hpp"
 
 namespace engine {
   bool init(uint32_t sdl_flags, int img_flags) {
@@ -23,7 +22,7 @@ namespace engine {
     #endif
 
     return true;
-  };
+  }
 
   void quit() {
     #ifdef USE_SDL_TTF
@@ -32,7 +31,7 @@ namespace engine {
 
     IMG_Quit();
     SDL_Quit();
-  };
+  }
 
   HWND create_window(const char *title, int x, int y, int w, int h, uint32_t flags) {
     SDL_Window* window = SDL_CreateWindow(title, x, y, w, h, flags);
@@ -141,21 +140,21 @@ namespace engine {
       std::cerr << "SDL_RegisterEvents has failed: " << SDL_GetError() << std::endl;
     }
     return type;
-  };
+  }
 
   uint32_t get_userevent_type() {
     static uint32_t type = register_userevent();
     return type;
-  };
+  }
 
   void trigger_userevent(UserEventCode code, void* data1, void* data2) {
     SDL_Event event;
     SDL_zero(event);
     event.type = get_userevent_type();
-    event.user.code = (int)code;
+    event.user.code = static_cast<int>(code);
     event.user.data1 = data1;
     event.user.data2 = data2;
 
     SDL_PushEvent(&event);
-  };
-}
+  }
+}  // namespace engine

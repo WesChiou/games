@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_SDLEVENTHANDLER_HPP_
-#define _INCLUDE_SDLEVENTHANDLER_HPP_
+#ifndef INCLUDE_SDLEVENTHANDLER_HPP_
+#define INCLUDE_SDLEVENTHANDLER_HPP_
 
 #include <SDL2/SDL.h>
 
@@ -9,4 +9,4 @@ public:
   virtual void handle_event(SDL_Event* event) = 0;
 };
 
-#endif
+#endif  // INCLUDE_SDLEVENTHANDLER_HPP_

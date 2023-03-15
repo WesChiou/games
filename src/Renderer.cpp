@@ -1,6 +1,5 @@
-#include "Renderer.hpp"
-
 #include <iostream>
+#include "../include/Renderer.hpp"
 
 void Renderer::render(const Scene& scene, const Camera& camera, const Rect* viewport) {
   SDL_Renderer* renderer = hrdr.get();
@@ -9,8 +8,8 @@ void Renderer::render(const Scene& scene, const Camera& camera, const Rect* view
   if (viewport) {
     SDL_RenderSetViewport(renderer, viewport);
 
-    float scale_x = (float)viewport->w / camera.w;
-    float scale_y = (float)viewport->h / camera.h;
+    float scale_x = static_cast<float>(viewport->w) / camera.w;
+    float scale_y = static_cast<float>(viewport->h) / camera.h;
     SDL_RenderSetScale(renderer, scale_x, scale_y);
   }
 
@@ -54,4 +53,4 @@ void Renderer::render_object(Object& object, int offset_x, int offset_y) {
   for (const auto& object : object.get_children()) {
     render_object(*object, object_rect.x, object_rect.y);
   }
-};
+}

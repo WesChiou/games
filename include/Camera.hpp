@@ -1,12 +1,12 @@
-#ifndef _INCLUDE_CAMERA_HPP_
-#define _INCLUDE_CAMERA_HPP_
+#ifndef INCLUDE_CAMERA_HPP_
+#define INCLUDE_CAMERA_HPP_
 
 class Camera {
 public:
-  Camera() {};
+  Camera() {}
 
   Camera(int x, int y, int w, int h)
-  : x(x), y(y), w(w), h(h) {};
+  : x(x), y(y), w(w), h(h) {}
 
   // The x, y, w, and h can specify a rectangle relative to a scene.
   int x{0};
@@ -15,4 +15,4 @@ public:
   int h{0};
 };
 
-#endif
+#endif  // INCLUDE_CAMERA_HPP_

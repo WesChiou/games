@@ -1,5 +1,5 @@
-#include "StateMachine.hpp"
-#include "MouseClickEvent.hpp"
+#include "../include/StateMachine.hpp"
+#include "../include/MouseClickEvent.hpp"
 
 void StateMachine::start(HRDR hrdr) {
   running = true;
@@ -7,12 +7,12 @@ void StateMachine::start(HRDR hrdr) {
   while (running) {
     uint64_t loop_start = SDL_GetPerformanceCounter();
 
-    handle_events(); // quit() here.
+    handle_events();  // quit() here.
     update();
     draw(hrdr);
 
     // Calculate real time fps.
-    float loop_ms = (SDL_GetPerformanceCounter() - loop_start) / (float)SDL_GetPerformanceFrequency();
+    float loop_ms = (SDL_GetPerformanceCounter() - loop_start) / static_cast<float>(SDL_GetPerformanceFrequency());
     real_time_fps = 1 / loop_ms;
   }
 }

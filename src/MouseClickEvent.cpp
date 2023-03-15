@@ -1,7 +1,6 @@
 #include <iostream>
-
-#include "engine.hpp"
-#include "MouseClickEvent.hpp"
+#include "../include/engine.hpp"
+#include "../include/MouseClickEvent.hpp"
 
 void MouseClickEvent::handle_event(SDL_Event *event) {
   if (event->type == SDL_MOUSEBUTTONDOWN || event->type == SDL_MOUSEBUTTONUP) {
@@ -48,10 +47,10 @@ void MouseClickEvent::handle_mouse_button_event(SDL_MouseButtonEvent event) {
       }
       break;
     case SDL_BUTTON_X1:
-      // TODO
+      // TODO(Qiu Weishi): x1
       break;
     case SDL_BUTTON_X2:
-      // TODO
+      // TODO(Qiu Weishi): x2
       break;
     default:
       break;

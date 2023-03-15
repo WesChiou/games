@@ -1,28 +1,28 @@
-#ifndef _INCLUDE_OBJECT_HPP_
-#define _INCLUDE_OBJECT_HPP_
+#ifndef INCLUDE_OBJECT_HPP_
+#define INCLUDE_OBJECT_HPP_
 
 #include <vector>
 #include <memory>
-
-#include "alias.hpp"
-#include "Material.hpp"
+#include <utility>
+#include "./alias.hpp"
+#include "./Material.hpp"
 
 class Object {
 public:
-  Object() {};
+  Object() {}
 
   Object(int x, int y, int w, int h)
-  : x(x), y(y), w(w), h(h) {};
+  : x(x), y(y), w(w), h(h) {}
 
-  ~Object() { children.clear(); };
+  ~Object() { children.clear(); }
 
   void add(std::unique_ptr<Object> child) {
     children.emplace_back(std::move(child));
-  };
+  }
 
   const std::vector<std::unique_ptr<Object>>& get_children() const {
     return children;
-  };
+  }
 
   // The x, y, w, and h can specify a rectangle relative to a scene.
   int x{0};
@@ -36,4 +36,4 @@ protected:
   std::vector<std::unique_ptr<Object>> children;
 };
 
-#endif
+#endif  // INCLUDE_OBJECT_HPP_

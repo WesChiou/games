@@ -26,7 +26,8 @@ void game() {
 
   // auto hfont = engine::open_font("res/SmileySans-Oblique.ttf", 16);
   auto text = engine::create_texture(hrdr, "res/icon_16x16.bmp");
-  Sprite msg{{ text }};
+  TextureRegion text_region{text};
+  Sprite msg{text_region};
   msg.set_anchor_point(0.5, 0.5);
 
   StateInitOptions world_state_options{
