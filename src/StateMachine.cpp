@@ -69,18 +69,14 @@ void StateMachine::handle_events() {
 
     // Forward event to each state.
     for (const auto& pair : states) {
-      if (!pair.second->is_sleep()) {
-        pair.second->handle_event(&event);
-      }
+      pair.second->handle_event(&event);
     }
   }
 }
 
 void StateMachine::update() {
   for (const auto& pair : states) {
-    if (!pair.second->is_pause()) {
-      pair.second->update();
-    }
+    pair.second->update();
   }
 }
 
@@ -92,9 +88,7 @@ void StateMachine::draw(HRDR hrdr) {
   SDL_RenderClear(renderer);
 
   for (const auto& pair : states) {
-    if (!pair.second->is_invisible()) {
-      pair.second->draw(hrdr);
-    }
+    pair.second->draw();
   }
 
   // Render the current frame.

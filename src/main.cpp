@@ -2,97 +2,12 @@
 
 #include <iostream>
 #include <memory>
-#include "../include/Sprite.hpp"
-#include "../include/Material.hpp"
-#include "../include/Object.hpp"
-#include "../include/Scene.hpp"
-#include "../include/Camera.hpp"
-#include "../include/Renderer.hpp"
-#include "../include/State.hpp"
-#include "../include/StateMachine.hpp"
-#include "../include/alias.hpp"
-#include "../include/engine.hpp"
+#include "../include/wish.hpp"
 
 void game() {
-  auto sm = std::make_shared<StateMachine>();
-
-  auto hwnd = engine::create_window("Hello",
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    300, 300, SDL_WINDOW_RESIZABLE);
-  engine::set_window_icon(hwnd, "res/icon_16x16.bmp");
-
-  auto hrdr = engine::create_renderer(hwnd, -1,
-    SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-
-  // auto hfont = engine::open_font("res/SmileySans-Oblique.ttf", 16);
-  auto text = engine::create_texture(hrdr, "res/icon_16x16.bmp");
-  TextureRegion text_region{text};
-  Sprite msg{text_region};
-  msg.set_anchor_point(0.5, 0.5);
-
-  StateInitOptions world_state_options{
-    .on_init = [](StateMachine& sm) {
-      std::cout << "menu init();" << std::endl;
-    },
-
-    .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
-      if (event->type == SDL_USEREVENT) {
-        if (event->user.code == static_cast<int>(
-          engine::UserEventCode::mouse_click)) {
-          std::cout << "clicked" << std::endl;
-        }
-        return;
-      }
-
-      switch (event->type) {
-        case SDL_KEYDOWN:
-          {
-            switch (event->key.keysym.sym) {
-              case SDLK_UP:
-                msg.position.y -= 16;
-                break;
-              case SDLK_RIGHT:
-                msg.position.x += 16;
-                break;
-              case SDLK_DOWN:
-                msg.position.y += 16;
-                break;
-              case SDLK_LEFT:
-                msg.position.x -= 16;
-                break;
-              default:
-                break;
-            }
-          }
-          break;
-        default:
-          break;
-      }
-    },
-
-    .on_update = [](StateMachine& sm) {
-    },
-
-    .on_draw = [&](StateMachine& sm, SDL_Renderer *renderer) {
-      msg.draw(hrdr, true);
-    },
-
-    .on_cleanup = [](StateMachine& sm) {
-      std::cout << "menu cleanup();" << std::endl;
-    }
-  };
-
-  auto world_state = std::make_unique<State>(sm, world_state_options);
-
-  sm->push_state("world", std::move(world_state));
-  sm->start(hrdr);
-}
-
-void game_no_statemachine() {
   auto hwnd = engine::create_window("Hello",
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     400, 400, SDL_WINDOW_RESIZABLE);
-  engine::set_window_icon(hwnd, "res/icon_16x16.bmp");
 
   auto hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
@@ -119,20 +34,43 @@ void game_no_statemachine() {
   Rect viewport{0, 0, 400, 400};
   Renderer renderer{hrdr};
 
-  bool running = true;
-  while (running) {
-    SDL_Event event;
-    SDL_StopTextInput();
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT) {
-        running = false;
+  StateInitOptions menu_state_options{
+    .on_init = [](StateMachine& sm) {
+      std::cout << "menu init();" << std::endl;
+    },
+
+    .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
+    },
+
+    .on_update = [](StateMachine& sm) {
+    },
+
+    .on_draw = [&](StateMachine& sm) {
+    },
+
+    .on_cleanup = [](StateMachine& sm) {
+      std::cout << "menu cleanup();" << std::endl;
+    }
+  };
+
+  StateInitOptions world_state_options{
+    .on_init = [](StateMachine& sm) {
+      std::cout << "world init();" << std::endl;
+    },
+
+    .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
+      if (event->type == SDL_USEREVENT) {
+        if (event->user.code == static_cast<int>(
+          engine::UserEventCode::mouse_click)) {
+          std::cout << "clicked" << std::endl;
+        }
         return;
       }
 
-      switch (event.type) {
+      switch (event->type) {
         case SDL_KEYDOWN:
           {
-            switch (event.key.keysym.sym) {
+            switch (event->key.keysym.sym) {
               case SDLK_UP:
                 camera.y -= 5;
                 break;
@@ -150,27 +88,48 @@ void game_no_statemachine() {
             }
           }
           break;
+        case SDL_KEYUP:
+          {
+            switch (event->key.keysym.sym) {
+              case SDLK_ESCAPE:
+                std::cout << "show menu" << std::endl;
+                break;
+              default:
+                break;
+            }
+          }
+          break;
         default:
           break;
       }
+    },
+
+    .on_update = [](StateMachine& sm) {
+    },
+
+    .on_draw = [&](StateMachine& sm) {
+      renderer.render(scene, camera, &viewport);
+    },
+
+    .on_cleanup = [](StateMachine& sm) {
+      std::cout << "world cleanup();" << std::endl;
     }
+  };
 
-    // update
+  auto sm = std::make_shared<StateMachine>();
 
-    // Erase the last frame.
-    SDL_SetRenderDrawColor(hrdr.get(), 0, 0, 0, 255);
-    SDL_RenderClear(hrdr.get());
-    // Draw
-    renderer.render(scene, camera, &viewport);
-    // Render the current frame.
-    SDL_RenderPresent(hrdr.get());
-  }
+  auto menu_state = std::make_unique<State>(sm, menu_state_options);
+  sm->push_state("menu", std::move(menu_state));
+
+  auto world_state = std::make_unique<State>(sm, world_state_options);
+  sm->push_state("world", std::move(world_state));
+
+  sm->start(hrdr);
 }
 
 int main(int argc, char *args[]) {
   if (engine::init(SDL_INIT_EVERYTHING, IMG_INIT_JPG | IMG_INIT_PNG)) {
-    // game();
-    game_no_statemachine();
+    game();
   }
   engine::quit();
 

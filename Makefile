@@ -53,3 +53,9 @@ linux_debug:
 # Release build for Linux
 linux_release:
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/release_linux/main
+
+# Release build as static library
+static_lib:
+	$(CC) -c $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(WINDOWS_FLAGS) $(LINKER_FLAGS)
+	ar rcs libwish.a *.o
+	rm -f *.o

@@ -5,19 +5,17 @@
 #include <memory>
 #include <functional>
 #include "./alias.hpp"
-#include "./Scene.hpp"
 
 class StateMachine;
 
 using CommonFunc = std::function<void (StateMachine&)>;
 using HandleEventFunc = std::function<void (StateMachine&, SDL_Event*)>;
-using DrawFunc = std::function<void (StateMachine&, SDL_Renderer*)>;
 
 struct StateInitOptions {
   CommonFunc on_init;
   HandleEventFunc on_handle_event;
   CommonFunc on_update;
-  DrawFunc on_draw;
+  CommonFunc on_draw;
   CommonFunc on_cleanup;
 };
 
@@ -35,7 +33,7 @@ public:
   CommonFunc on_init;
   HandleEventFunc on_handle_event;
   CommonFunc on_update;
-  DrawFunc on_draw;
+  CommonFunc on_draw;
   CommonFunc on_cleanup;
 
   void init() {
@@ -46,6 +44,7 @@ public:
   }
 
   void handle_event(SDL_Event* event) {
+    if (sleep) return;
     auto sm_shared = sm.lock();
     if (on_handle_event && sm_shared) {
       on_handle_event(*sm_shared, event);
@@ -53,16 +52,18 @@ public:
   }
 
   void update() {
+    if (pause) return;
     auto sm_shared = sm.lock();
     if (on_update && sm_shared) {
       on_update(*sm_shared);
     }
   }
 
-  void draw(HRDR hrdr) {
+  void draw() {
+    if (invisible) return;
     auto sm_shared = sm.lock();
     if (on_draw && sm_shared) {
-      on_draw(*sm_shared, hrdr.get());
+      on_draw(*sm_shared);
     }
   }
 
@@ -73,26 +74,12 @@ public:
     }
   }
 
-  void set_scene(std::shared_ptr<Scene> scene) {
-    this->scene = scene;
-  }
-
-  bool is_pause() { return pause; }
-  void toggle_pause(bool v) { pause = v; }
-
-  bool is_invisible() { return invisible; }
-  void toggle_invisible(bool v) { invisible = v; }
-
-  bool is_sleep() { return sleep; }
-  void toggle_sleep(bool v) { sleep = v; }
-
 protected:
-  std::weak_ptr<StateMachine> sm;
-  std::shared_ptr<Scene> scene;
+  bool pause{false};  // update or not
+  bool invisible{false};  // draw or not
+  bool sleep{false};  // handle_event or not
 
-  bool pause{false};  // update or not, using by StateMachine
-  bool invisible{false};  // draw or not, using by StateMachine
-  bool sleep{false};  // handle_event or not, using by StateMachine
+  std::weak_ptr<StateMachine> sm;
 };
 
 #endif  // INCLUDE_STATE_HPP_
