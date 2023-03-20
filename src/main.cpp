@@ -12,23 +12,23 @@ void game() {
   auto hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
-  auto o4 = std::make_unique<Object>(60, 60, 30, 30);
+  auto o4 = std::make_shared<Object>(60, 60, 30, 30);
   o4->material = Material{{200, 200, 200, 255}};
 
-  auto o3 = std::make_unique<Object>(10, 10, 60, 60);
+  auto o3 = std::make_shared<Object>(10, 10, 60, 60);
   o3->material = Material{{120, 50, 250, 255}};
-  o3->add(std::move(o4));
+  o3->add(o4);
 
-  auto o2 = std::make_unique<Object>(10, 10, 80, 80);
+  auto o2 = std::make_shared<Object>(10, 10, 80, 80);
   o2->material = Material{{250, 50, 20, 255}};
-  o2->add(std::move(o3));
+  o2->add(o3);
 
-  auto o1 = std::make_unique<Object>(10, 10, 100, 100);
+  auto o1 = std::make_shared<Object>(10, 10, 100, 100);
   o1->material = Material{{120, 50, 20, 255}};
-  o1->add(std::move(o2));
+  o1->add(o2);
 
   Scene scene{};
-  scene.add(std::move(o1));
+  scene.add(o1);
 
   Camera camera{0, 0, 200, 200};
   Rect viewport{0, 0, 400, 400};

@@ -1,5 +1,5 @@
-#ifndef WISH_HPP_
-#define WISH_HPP_
+#ifndef INCLUDE_WISH_HPP_
+#define INCLUDE_WISH_HPP_
 
 #include "./alias.hpp"
 #include "./Camera.hpp"
@@ -15,4 +15,4 @@
 #include "./StateMachine.hpp"
 #include "./TextureRegion.hpp"
 
-#endif
+#endif  // INCLUDE_WISH_HPP_

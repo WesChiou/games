@@ -36,26 +36,30 @@ ifeq ($(USE_SDL_TTF),1)
 endif
 
 # There are the targets that compiles our executable
-.DEFAULT_GOAL := windows_debug # set target windows_debug as default target
-
-# Debug build for Windows
-windows_debug:
-	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(DEBUG_FLAGS) $(LINKER_FLAGS) -o bin/debug/main.exe
-
-# Release build for Windows
-windows_release:
-	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(WINDOWS_FLAGS) $(LINKER_FLAGS) -o bin/release/main.exe
-
-# Debug build for Linux
-linux_debug:
-	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(DEBUG_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/debug_linux/main
-
-# Release build for Linux
-linux_release:
-	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/release_linux/main
+.DEFAULT_GOAL := static_lib # set default target
 
 # Release build as static library
 static_lib:
 	$(CC) -c $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(WINDOWS_FLAGS) $(LINKER_FLAGS)
 	ar rcs libwish.a *.o
 	rm -f *.o
+
+# Debug build for Windows
+windows_debug:
+	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(DEBUG_FLAGS) $(LINKER_FLAGS) -o bin/debug/main.exe
+	bin/debug/main.exe
+
+# Release build for Windows
+windows_release:
+	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(WINDOWS_FLAGS) $(LINKER_FLAGS) -o bin/release/main.exe
+	bin/release/main.exe
+
+# Debug build for Linux
+linux_debug:
+	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(DEBUG_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/debug_linux/main
+	bin/debug_linux/main
+
+# Release build for Linux
+linux_release:
+	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/release_linux/main
+	bin/release_linux/main

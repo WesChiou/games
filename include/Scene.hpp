@@ -2,22 +2,21 @@
 #define INCLUDE_SCENE_HPP_
 
 #include <vector>
-#include <utility>
 #include <memory>
 #include "./Object.hpp"
 
 class Scene {
 public:
-  void add(std::unique_ptr<Object> child) {
-    children.emplace_back(std::move(child));
+  void add(std::shared_ptr<Object> child) {
+    children.emplace_back(child);
   }
 
-  const std::vector<std::unique_ptr<Object>>& get_children() const {
+  const std::vector<std::shared_ptr<Object>>& get_children() const {
     return children;
   }
 
 private:
-  std::vector<std::unique_ptr<Object>> children;
+  std::vector<std::shared_ptr<Object>> children;
 };
 
 #endif  // INCLUDE_SCENE_HPP_
