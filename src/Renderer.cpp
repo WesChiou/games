@@ -1,24 +1,34 @@
 #include <iostream>
 #include "../include/Renderer.hpp"
 
-void Renderer::render(const Scene& scene, const Camera& camera, const Rect* viewport) {
+void Renderer::render(const Scene& scene, const Camera* camera, const Rect* viewport) {
   SDL_Renderer* renderer = hrdr.get();
   if (!renderer) return;
 
-  if (viewport) {
-    SDL_RenderSetViewport(renderer, viewport);
-
-    float scale_x = static_cast<float>(viewport->w) / camera.w;
-    float scale_y = static_cast<float>(viewport->h) / camera.h;
+  if (camera && viewport) {
+    float scale_x = static_cast<float>(viewport->w) / camera->w;
+    float scale_y = static_cast<float>(viewport->h) / camera->h;
     SDL_RenderSetScale(renderer, scale_x, scale_y);
   }
 
-  Rect clip_rect{ 0, 0, camera.w, camera.h };
-  SDL_RenderSetClipRect(renderer, &clip_rect);
+  if (viewport) {
+    SDL_RenderSetViewport(renderer, viewport);
+  }
+
+  int offset_x = 0;
+  int offset_y = 0;
+
+  if (camera) {
+    offset_x = -camera->x;
+    offset_y = -camera->y;
+
+    Rect clip_rect{ 0, 0, camera->w, camera->h };
+    SDL_RenderSetClipRect(renderer, &clip_rect);
+  }
 
   // Draw objects.
   for (const auto& object : scene.get_children()) {
-    render_object(*object, -camera.x, -camera.y);
+    render_object(*object, offset_x, offset_y);
   }
 
   // Reset renderer.

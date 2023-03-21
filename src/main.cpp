@@ -108,7 +108,7 @@ void game() {
     },
 
     .on_draw = [&](StateMachine& sm) {
-      renderer.render(scene, camera, &viewport);
+      renderer.render(scene, &camera, &viewport);
     },
 
     .on_cleanup = [](StateMachine& sm) {

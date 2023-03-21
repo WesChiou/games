@@ -15,7 +15,7 @@ public:
 
   // Using the camera to take a view from the scene,
   // then draw it to the viewport.
-  void render(const Scene& scene, const Camera& camera, const Rect* viewport = nullptr);
+  void render(const Scene& scene, const Camera* camera = nullptr, const Rect* viewport = nullptr);
 
 private:
   HRDR hrdr;
