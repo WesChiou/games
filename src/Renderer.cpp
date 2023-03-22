@@ -1,22 +1,23 @@
 #include <iostream>
 #include "../include/Renderer.hpp"
 
-void Renderer::render(const Scene& scene, const Camera* camera, const Rect* viewport) {
+void Renderer::render(const Scene& scene, const Camera* camera,
+  const Rect* viewport, bool scale_to_viewport) {
   SDL_Renderer* renderer = hrdr.get();
   if (!renderer) return;
-
-  if (camera && viewport) {
-    float scale_x = static_cast<float>(viewport->w) / camera->w;
-    float scale_y = static_cast<float>(viewport->h) / camera->h;
-    SDL_RenderSetScale(renderer, scale_x, scale_y);
-  }
 
   if (viewport) {
     SDL_RenderSetViewport(renderer, viewport);
   }
 
-  int offset_x = 0;
-  int offset_y = 0;
+  if (scale_to_viewport && camera && viewport) {
+    float scale_x = static_cast<float>(viewport->w) / camera->w;
+    float scale_y = static_cast<float>(viewport->h) / camera->h;
+    SDL_RenderSetScale(renderer, scale_x, scale_y);
+  }
+
+  int offset_x{0};
+  int offset_y{0};
 
   if (camera) {
     offset_x = -camera->x;

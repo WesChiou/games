@@ -30,8 +30,8 @@ void game() {
   Scene scene{};
   scene.add(o1);
 
-  Camera camera{0, 0, 200, 200};
-  Rect viewport{0, 0, 400, 400};
+  Camera camera{0, 0, 1000, 1000};
+  Rect viewport{100, 100, 200, 200};
   Renderer renderer{hrdr};
 
   StateInitOptions menu_state_options{
@@ -108,7 +108,14 @@ void game() {
     },
 
     .on_draw = [&](StateMachine& sm) {
-      renderer.render(scene, &camera, &viewport);
+      // renderer.render(scene, nullptr, nullptr,   false);  // 000
+      // renderer.render(scene, nullptr, nullptr,    true);  // 001
+      // renderer.render(scene, nullptr, &viewport, false);  // 010
+      // renderer.render(scene, nullptr, &viewport,  true);  // 011 *
+      // renderer.render(scene, &camera, nullptr,   false);  // 100
+      // renderer.render(scene, &camera, nullptr,    true);  // 101 *
+      // renderer.render(scene, &camera, &viewport, false);  // 110
+      // renderer.render(scene, &camera, &viewport,  true);  // 111
     },
 
     .on_cleanup = [](StateMachine& sm) {
