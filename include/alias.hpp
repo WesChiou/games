@@ -8,6 +8,7 @@
 #endif
 
 #include <memory>
+#include "./Vector2D.hpp"
 
 using HWND = std::shared_ptr<SDL_Window>;
 using HRDR = std::shared_ptr<SDL_Renderer>;
@@ -22,5 +23,8 @@ using FRect = SDL_FRect;
 using Point = SDL_Point;
 using FPoint = SDL_FPoint;
 using Color = SDL_Color;
+
+using Vec2 = Vector2D<int>;
+using FVec2 = Vector2D<float>;
 
 #endif  // INCLUDE_ALIAS_HPP_

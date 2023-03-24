@@ -11,7 +11,7 @@ class StateMachine;
 using CommonFunc = std::function<void (StateMachine&)>;
 using HandleEventFunc = std::function<void (StateMachine&, SDL_Event*)>;
 
-struct StateInitOptions {
+struct StateCallbacks {
   CommonFunc on_init;
   HandleEventFunc on_handle_event;
   CommonFunc on_update;
@@ -19,67 +19,79 @@ struct StateInitOptions {
   CommonFunc on_cleanup;
 };
 
+struct StateOptions {
+  bool pause{false};  // update or not
+  bool invisible{false};  // draw or not
+  bool sleep{false};  // handle_event or not
+};
+
 class State {
 public:
   explicit State(std::weak_ptr<StateMachine> sm) : sm(sm) {}
-  State(std::weak_ptr<StateMachine> sm, StateInitOptions options)
-  : on_init(options.on_init)
-  , on_handle_event(options.on_handle_event)
-  , on_update(options.on_update)
-  , on_draw(options.on_draw)
-  , on_cleanup(options.on_cleanup)
-  , sm(sm) {}
 
-  CommonFunc on_init;
-  HandleEventFunc on_handle_event;
-  CommonFunc on_update;
-  CommonFunc on_draw;
-  CommonFunc on_cleanup;
+  State(std::weak_ptr<StateMachine> sm, StateOptions options)
+  : sm(sm), options(options) {}
+
+  State(std::weak_ptr<StateMachine> sm, StateCallbacks callbacks)
+  : sm(sm), callbacks(callbacks) {}
+
+  State(std::weak_ptr<StateMachine> sm, StateOptions options, StateCallbacks callbacks)
+  : sm(sm), options(options), callbacks(callbacks) {}
 
   void init() {
     auto sm_shared = sm.lock();
-    if (on_init && sm_shared) {
-      on_init(*sm_shared);
+    if (callbacks.on_init && sm_shared) {
+      callbacks.on_init(*sm_shared);
     }
   }
 
   void handle_event(SDL_Event* event) {
-    if (sleep) return;
+    if (options.sleep) return;
     auto sm_shared = sm.lock();
-    if (on_handle_event && sm_shared) {
-      on_handle_event(*sm_shared, event);
+    if (callbacks.on_handle_event && sm_shared) {
+      callbacks.on_handle_event(*sm_shared, event);
     }
   }
 
   void update() {
-    if (pause) return;
+    if (options.pause) return;
     auto sm_shared = sm.lock();
-    if (on_update && sm_shared) {
-      on_update(*sm_shared);
+    if (callbacks.on_update && sm_shared) {
+      callbacks.on_update(*sm_shared);
     }
   }
 
   void draw() {
-    if (invisible) return;
+    if (options.invisible) return;
     auto sm_shared = sm.lock();
-    if (on_draw && sm_shared) {
-      on_draw(*sm_shared);
+    if (callbacks.on_draw && sm_shared) {
+      callbacks.on_draw(*sm_shared);
     }
   }
 
   void cleanup() {
     auto sm_shared = sm.lock();
-    if (on_cleanup && sm_shared) {
-      on_cleanup(*sm_shared);
+    if (callbacks.on_cleanup && sm_shared) {
+      callbacks.on_cleanup(*sm_shared);
     }
   }
 
-protected:
-  bool pause{false};  // update or not
-  bool invisible{false};  // draw or not
-  bool sleep{false};  // handle_event or not
+  bool is_pause() { return options.pause; };
+  bool is_invisible() { return options.invisible; };
+  bool is_sleep() { return options.sleep; };
 
+  void set_options(StateOptions options) {
+    this->options = options;
+  }
+
+  void set_callbacks(StateCallbacks callbacks) {
+    this->callbacks = callbacks;
+  }
+
+protected:
   std::weak_ptr<StateMachine> sm;
+  StateOptions options;
+  StateCallbacks callbacks;
 };
 
 #endif  // INCLUDE_STATE_HPP_

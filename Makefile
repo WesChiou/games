@@ -63,3 +63,7 @@ linux_debug:
 linux_release:
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/release_linux/main
 	bin/release_linux/main
+
+# Lint code style by cpplint
+lint:
+	find . -name \*.hpp -or -name \*.cpp | xargs cpplint --filter=-legal/copyright,-whitespace/indent,-whitespace/line_length

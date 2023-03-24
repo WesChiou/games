@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include "../include/wish.hpp"
+#include "State.hpp"
 
 void game() {
   auto hwnd = engine::create_window("Hello",
@@ -27,14 +28,22 @@ void game() {
   o1->material = Material{{120, 50, 20, 255}};
   o1->add(o2);
 
-  Scene scene{};
+  Scene scene{hrdr};
   scene.add(o1);
 
-  Camera camera{0, 0, 1000, 1000};
+  Rect camera{0, 0, 80, 80};
   Rect viewport{100, 100, 200, 200};
-  Renderer renderer{hrdr};
+  auto sm = std::make_shared<StateMachine>();
 
-  StateInitOptions menu_state_options{
+  // Create menu
+
+  StateOptions menu_options{
+    .pause = true,
+    .invisible = true,
+    .sleep = true,
+  };
+
+  StateCallbacks menu_callbacks{
     .on_init = [](StateMachine& sm) {
       std::cout << "menu init();" << std::endl;
     },
@@ -53,7 +62,18 @@ void game() {
     }
   };
 
-  StateInitOptions world_state_options{
+  auto menu_state = std::make_unique<State>(sm, menu_options, menu_callbacks);
+  sm->push_state("menu", std::move(menu_state));
+
+  // Create world
+
+  StateOptions world_options{
+    .pause = false,
+    .invisible = false,
+    .sleep = false,
+  };
+
+  StateCallbacks world_callbacks{
     .on_init = [](StateMachine& sm) {
       std::cout << "world init();" << std::endl;
     },
@@ -104,18 +124,18 @@ void game() {
       }
     },
 
-    .on_update = [](StateMachine& sm) {
+    .on_update = [&](StateMachine& sm) {
     },
 
     .on_draw = [&](StateMachine& sm) {
-      // renderer.render(scene, nullptr, nullptr,   false);  // 000
-      // renderer.render(scene, nullptr, nullptr,    true);  // 001
-      // renderer.render(scene, nullptr, &viewport, false);  // 010
-      // renderer.render(scene, nullptr, &viewport,  true);  // 011 *
-      // renderer.render(scene, &camera, nullptr,   false);  // 100
-      // renderer.render(scene, &camera, nullptr,    true);  // 101 *
-      // renderer.render(scene, &camera, &viewport, false);  // 110
-      // renderer.render(scene, &camera, &viewport,  true);  // 111
+      // scene.update(nullptr, nullptr,   false);  // 000
+      // scene.update(nullptr, nullptr,    true);  // 001
+      // scene.update(nullptr, &viewport, false);  // 010
+      // scene.update(nullptr, &viewport,  true);  // 011 *
+      // scene.update(&camera, nullptr,   false);  // 100
+      // scene.update(&camera, nullptr,    true);  // 101 *
+      // scene.update(&camera, &viewport, false);  // 110
+      scene.update(&camera, &viewport,  true);  // 111
     },
 
     .on_cleanup = [](StateMachine& sm) {
@@ -123,14 +143,10 @@ void game() {
     }
   };
 
-  auto sm = std::make_shared<StateMachine>();
-
-  auto menu_state = std::make_unique<State>(sm, menu_state_options);
-  sm->push_state("menu", std::move(menu_state));
-
-  auto world_state = std::make_unique<State>(sm, world_state_options);
+  auto world_state = std::make_unique<State>(sm, world_options, world_callbacks);
   sm->push_state("world", std::move(world_state));
 
+  // Start game loop
   sm->start(hrdr);
 }
 
