@@ -2,8 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
-#include "utils.hpp"
-#include "NPuzzle.hpp"
+#include "../include/utils.hpp"
+#include "../include/NPuzzle.hpp"
 
 NPuzzle::NPuzzle(int n, TextureRegion image) {
   this->n = utils::is_square_number(n + 1) ? n : 8;
@@ -15,7 +15,7 @@ NPuzzle::NPuzzle(int n, TextureRegion image) {
 
   if (!image_size || !image.get_texture()) {
     throw std::runtime_error("Image size is too small.");
-  };
+  }
 
   this->image = image;
   this->image.set_region({ 0, 0, image_size, image_size });
@@ -40,13 +40,13 @@ NPuzzle::NPuzzle(int n, TextureRegion image) {
 
   squares = utils::shuffle_n_puzzle(squares, hidden_number(), n * 100, cols(), rows());
   // for (auto i : test) std::cout << i << " ";
-};
+}
 
 void NPuzzle::handle_event(SDL_Event* event) {
   if (is_pause()) return;
 
   if (event->type == SDL_USEREVENT) {
-    if (event->user.code == (int)engine::UserEventCode::mouse_click) {
+    if (event->user.code == static_cast<int>(engine::UserEventCode::mouse_click)) {
       std::cout << "clicked image" << std::endl;
     }
     return;
@@ -76,13 +76,12 @@ void NPuzzle::handle_event(SDL_Event* event) {
     default:
       break;
   }
-
-};
+}
 
 void NPuzzle::update() {
   const uint8_t* state = SDL_GetKeyboardState(nullptr);
   show_origin_image = (state[SDL_SCANCODE_LALT] || state[SDL_SCANCODE_RALT]);
-};
+}
 
 void NPuzzle::draw(SDL_Renderer *renderer) {
   if (show_origin_image) {
@@ -110,7 +109,7 @@ void NPuzzle::draw(SDL_Renderer *renderer) {
       }
     }
   }
-};
+}
 
 void NPuzzle::move_blank_square(Direction direction) {
   int curr = std::find(squares.begin(), squares.end(), hidden_number()) - squares.begin();
@@ -142,4 +141,4 @@ void NPuzzle::move_blank_square(Direction direction) {
 
   int target = to.y * rows() + to.x;
   std::swap(squares[curr], squares[target]);
-};
+}

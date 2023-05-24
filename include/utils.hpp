@@ -1,5 +1,5 @@
-#ifndef _INCLUDE_UTILS_HPP_
-#define _INCLUDE_UTILS_HPP_
+#ifndef INCLUDE_UTILS_HPP_
+#define INCLUDE_UTILS_HPP_
 
 #include <vector>
 
@@ -17,6 +17,6 @@ namespace utils {
 
   // n-puzzle shuffler
   std::vector<int> shuffle_n_puzzle(std::vector<int> puzzle, int blank_code, int moves, int cols, int rows);
-}
+}  // namespace utils
 
-#endif
+#endif  // INCLUDE_UTILS_HPP_

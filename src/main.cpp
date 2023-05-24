@@ -1,8 +1,8 @@
 // Copyright 2023 Qiu Weishi
 
-#include <wish/wish.hpp>
 #include <iostream>
 #include <memory>
+#include <wish/wish.hpp>
 #include "../include/NPuzzle.hpp"
 
 void game() {
@@ -21,7 +21,7 @@ void game() {
   NPuzzle npuzzle{ 15, tr };
   engine::set_window_size(hwnd, npuzzle.image_region().w, npuzzle.image_region().h);
 
-  StateInitOptions world_state_options{
+  StateCallbacks state_callbacks{
     .on_init = [](StateMachine& sm) {
     },
 
@@ -41,7 +41,7 @@ void game() {
     }
   };
 
-  auto world_state = std::make_unique<State>(sm, world_state_options);
+  auto world_state = std::make_unique<State>(sm, state_callbacks);
 
   sm->push_state("world", std::move(world_state));
   sm->start(hrdr);

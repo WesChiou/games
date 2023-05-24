@@ -1,12 +1,11 @@
+#include "../include/utils.hpp"
 #include <cmath>
 #include <random>
 #include <algorithm>
 
-#include "utils.hpp"
-
 namespace utils {
   bool is_square_number(int n) {
-    return (n > -1) && (sqrt(n) == (int)sqrt(n));
+    return (n > -1) && (sqrt(n) == static_cast<int>(sqrt(n)));
   }
 
   int largest_multiple_of_n(int n, int upper_limit) {
@@ -27,7 +26,7 @@ namespace utils {
       [](int i) { return i == -1; }), pieces.end());
 
     return pieces;
-  };
+  }
 
   std::vector<int> shuffle_n_puzzle(std::vector<int> puzzle, int blank_code, int moves, int cols, int rows) {
     int blank = std::find(puzzle.begin(), puzzle.end(), blank_code) - puzzle.begin();
@@ -46,6 +45,5 @@ namespace utils {
     }
 
     return puzzle;
-  };
-
-}
+  }
+}  // namespace utils

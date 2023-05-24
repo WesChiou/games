@@ -31,15 +31,23 @@ LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lwish
 # Debug build for Windows
 windows_debug:
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(DEBUG_FLAGS) $(LINKER_FLAGS) -o bin/debug/main.exe -lSDL2 -lSDL2_image -lSDL2_ttf
+	bin/debug/main.exe
 
 # Release build for Windows
 windows_release:
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(WINDOWS_FLAGS) $(LINKER_FLAGS) -o bin/release/main.exe -lSDL2 -lSDL2_image -lSDL2_ttf
+	bin/release/main.exe
 
 # Debug build for Linux
 linux_debug:
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(DEBUG_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/debug_linux/main -lSDL2 -lSDL2_image -lSDL2_ttf
+	bin/debug_linux/main
 
 # Release build for Linux
 linux_release:
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMMON_FLAGS) $(RELEASE_FLAGS) $(LINUX_FLAGS) $(LINKER_FLAGS) -o bin/release_linux/main -lSDL2 -lSDL2_image -lSDL2_ttf
+	bin/release_linux/main
+
+# Lint code style by cpplint
+lint:
+	find . -name \*.hpp -or -name \*.cpp | xargs cpplint --filter=-legal/copyright,-whitespace/indent,-whitespace/line_length
