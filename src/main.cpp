@@ -128,14 +128,14 @@ void game() {
     },
 
     .on_draw = [&](StateMachine& sm) {
-      // scene.update(nullptr, nullptr,   false);  // 000
+      // scene.render(nullptr, nullptr,   false);  // 000
       // scene.update(nullptr, nullptr,    true);  // 001
       // scene.update(nullptr, &viewport, false);  // 010
       // scene.update(nullptr, &viewport,  true);  // 011 *
       // scene.update(&camera, nullptr,   false);  // 100
       // scene.update(&camera, nullptr,    true);  // 101 *
       // scene.update(&camera, &viewport, false);  // 110
-      scene.update(&camera, &viewport,  true);  // 111
+      scene.render(&camera, &viewport,  true);  // 111
     },
 
     .on_cleanup = [](StateMachine& sm) {

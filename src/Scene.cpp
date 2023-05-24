@@ -1,6 +1,6 @@
 #include "Scene.hpp"
 
-void Scene::update(const Rect* camera, const Rect* viewport, bool scale_to_viewport) {
+void Scene::render(const Rect* camera, const Rect* viewport, bool scale_to_viewport) {
   SDL_Renderer* renderer = hrdr.get();
 
   if (!renderer) return;
@@ -34,8 +34,8 @@ void Scene::update(const Rect* camera, const Rect* viewport, bool scale_to_viewp
     SDL_RenderSetClipRect(renderer, &clip_rect);
   }
 
-  for (const auto& object : children) {
-    update_object(*object, offset);
+  for (const auto& object : objects) {
+    render_object(*object, offset);
   }
 
   // Reset renderer
@@ -44,7 +44,7 @@ void Scene::update(const Rect* camera, const Rect* viewport, bool scale_to_viewp
   SDL_RenderSetViewport(renderer, nullptr);
 }
 
-void Scene::update_object(Object& object, const Point& offset) {
+void Scene::render_object(Object& object, const Point& offset) {
   SDL_Renderer* renderer = hrdr.get();
 
   if (!renderer) return;
@@ -84,8 +84,8 @@ void Scene::update_object(Object& object, const Point& offset) {
     }
   }
 
-  // Update children
+  // Update objects
   for (const auto& object : object.get_children()) {
-    update_object(*object, { object_rect.x, object_rect.y });
+    render_object(*object, { object_rect.x, object_rect.y });
   }
 }
