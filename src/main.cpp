@@ -39,33 +39,43 @@ void game() {
   control_area->add(button_speedx1);
   control_area->add(button_speedx2);
 
-  Scene world_ui{};
+  Scene world_ui{hrdr};
   world_ui.add(control_area);
 
-  Renderer renderer{hrdr};
+  StateOptions menu_options{
+    .pause = false,
+    .invisible = false,
+    .sleep = false,
+  };
 
-  // StateInitOptions menu_state_options{
-  //   .on_init = [](StateMachine& sm) {
-  //     std::cout << "menu init();" << std::endl;
-  //   },
-
-  //   .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
-  //   },
-
-  //   .on_update = [](StateMachine& sm) {
-  //   },
-
-  //   .on_draw = [&](StateMachine& sm) {
-  //   },
-
-  //   .on_cleanup = [](StateMachine& sm) {
-  //     std::cout << "menu cleanup();" << std::endl;
-  //   }
-  // };
-
-  StateInitOptions world_state_options{
+  StateCallbacks menu_callbacks{
     .on_init = [](StateMachine& sm) {
-      std::cout << "world init();" << std::endl;
+      std::cout << "menu init" << std::endl;
+    },
+
+    .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
+    },
+
+    .on_update = [](StateMachine& sm) {
+    },
+
+    .on_draw = [&](StateMachine& sm) {
+    },
+
+    .on_cleanup = [](StateMachine& sm) {
+      std::cout << "menu cleanup" << std::endl;
+    }
+  };
+
+  StateOptions world_options{
+    .pause = false,
+    .invisible = false,
+    .sleep = false,
+  };
+
+  StateCallbacks world_callbacks{
+    .on_init = [](StateMachine& sm) {
+      std::cout << "world init" << std::endl;
     },
 
     .on_handle_event = [&](StateMachine& sm, SDL_Event* event) {
@@ -113,20 +123,20 @@ void game() {
     },
 
     .on_draw = [&](StateMachine& sm) {
-      renderer.render(world_ui);
+      world_ui.render();
     },
 
     .on_cleanup = [](StateMachine& sm) {
-      std::cout << "world cleanup();" << std::endl;
+      std::cout << "world cleanup" << std::endl;
     }
   };
 
   auto sm = std::make_shared<StateMachine>();
 
-  // auto menu_state = std::make_unique<State>(sm, menu_state_options);
-  // sm->push_state("menu", std::move(menu_state));
+  auto menu_state = std::make_unique<State>(sm, menu_options, menu_callbacks);
+  sm->push_state("menu", std::move(menu_state));
 
-  auto world_state = std::make_unique<State>(sm, world_state_options);
+  auto world_state = std::make_unique<State>(sm, world_options, world_callbacks);
   sm->push_state("world", std::move(world_state));
 
   sm->start(hrdr);

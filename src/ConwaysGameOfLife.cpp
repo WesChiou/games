@@ -1,4 +1,5 @@
 #include "ConwaysGameOfLife.hpp"
+#include <algorithm>
 #include <ctime>
 #include <random>
 #include <vector>
@@ -22,7 +23,8 @@ void ConwaysGameOfLife::next_generation() {
   size_t cols = cells[0].size();
 
   // Get next generation cells
-  int next_generation[rows][cols] = {0};
+  int next_generation[rows][cols];
+  std::fill(next_generation[0], next_generation[0] + rows * cols, 0);
   for (size_t i = 0; i < rows; ++i) {
     for (size_t j = 0; j < cols; ++j) {
       // Count nearbys
