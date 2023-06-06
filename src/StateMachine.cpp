@@ -17,11 +17,11 @@ void StateMachine::start(HRDR hrdr) {
   }
 }
 
-void StateMachine::push_state(std::string name, std::unique_ptr<State> state) {
+void StateMachine::push_state(std::string name, std::shared_ptr<State> state) {
   // Replace state if existed (by name).
   for (auto& s : states) {
     if (s.first == name) {
-      s.second = std::move(state);
+      s.second = state;
       s.second->init();
       return;
     }

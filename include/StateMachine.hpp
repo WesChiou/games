@@ -20,7 +20,7 @@ public:
   void start(HRDR hrdr);
 
   // Push a state into game loop.
-  void push_state(std::string name, std::unique_ptr<State> state);
+  void push_state(std::string name, std::shared_ptr<State> state);
 
   // Pop the last state.
   void pop_state();
@@ -32,7 +32,7 @@ private:
   bool running{false};
   int real_time_fps{0};
 
-  std::vector<std::pair<std::string, std::unique_ptr<State>>> states;
+  std::vector<std::pair<std::string, std::shared_ptr<State>>> states;
 
   std::vector<std::unique_ptr<SDLEventHandler>> event_handlers;
 
