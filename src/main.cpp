@@ -146,13 +146,13 @@
 void game() {
   HWND hwnd = engine::create_window("Conway's Game of Life",
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-    400, 400, SDL_WINDOW_RESIZABLE);
+    800, 640, SDL_WINDOW_RESIZABLE);
   engine::set_window_icon(hwnd, "res/icon_32x32.png");
 
   HRDR hrdr = engine::create_renderer(hwnd, -1,
     SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
-  GameMap game_map;
+  GameMap game_map{ 200, 200 };
 
   StateOptions game_map_state_options{
     .pause = false,
