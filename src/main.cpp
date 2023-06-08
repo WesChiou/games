@@ -189,6 +189,11 @@ void game() {
             }
           }
           break;
+        case SDL_MOUSEWHEEL:
+          {
+            game_map.move_camera(0, 0, -(event->wheel.y));
+          }
+          break;
         default:
           break;
       }

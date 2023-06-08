@@ -125,7 +125,8 @@ public:
     }
   }
 
-  void move_camera(int offset_x, int offset_y) {
+  void move_camera(int offset_x, int offset_y, int offset_z = 0) {
+    // move camera x
     camera->x += offset_x;
     if (camera->x < 0) {
       camera->x = 0;
@@ -134,12 +135,21 @@ public:
       camera->x = get_map_width() - camera->w;
     }
 
+    // move camera y
     camera->y += offset_y;
     if (camera->y < 0) {
       camera->y = 0;
     }
     if (camera->y + camera->h > get_map_height()) {
       camera->y = get_map_height() - camera->h;
+    }
+
+    // move camera z (z is a virtual property, map it to camera.w and camera.h)
+    float zoom = 1 + 0.1 * offset_z;
+    float zoom_rate = (camera->w * zoom) / 800;
+    if (zoom_rate >= 0.5 && zoom_rate <= 2.0) {
+      camera->w *= zoom;
+      camera->h *= zoom;
     }
   }
 
