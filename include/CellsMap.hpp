@@ -7,35 +7,44 @@
 
 class CellsMap {
 public:
-  CellsMap() {
-    initialize_map(48, 64);
-  }
-
-  CellsMap(int rows, int cols) {
+  CellsMap(): rows(100), cols(100) {
     initialize_map(rows, cols);
   }
 
-  const std::vector<std::vector<int>>& get_cells() const {
-    return cells;
+  CellsMap(int rows, int cols) {
+    this->rows = (rows > 0 && rows <= 999) ? rows : 100;
+    this->cols = (cols > 0 && cols <= 999) ? cols : 100;
+    initialize_map(rows, cols);
   }
 
-  int get_generations() const {
-    return generations;
+  const std::vector<std::vector<int>>& get_cells() const { return cells; }
+
+  int get_rows() { return rows; }
+
+  int get_cols() { return cols; }
+
+  int get_generations() const { return generations; }
+
+  int get_cells_count() {
+    int count{ 0 };
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        count += cells[i][j];
+      }
+    }
+    return count;
   }
 
   void next_generation() {
-    size_t rows = cells.size();
-    size_t cols = cells[0].size();
-
     // Get next generation cells
     int next_generation[rows][cols];
     std::fill(next_generation[0], next_generation[0] + rows * cols, 0);
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
         // Count nearbys
         int nearbys = 0;
-        for (size_t row = i - 1; row <= i + 1; row++) {
-          for (size_t col = j - 1; col <= j + 1; col++) {
+        for (int row = i - 1; row <= i + 1; row++) {
+          for (int col = j - 1; col <= j + 1; col++) {
             if (row >= 0
               && row < rows
               && col >= 0
@@ -61,17 +70,19 @@ public:
     }
 
     // Update
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
         cells[i][j] = next_generation[i][j];
       }
     }
+
     generations++;
   }
 
 private:
+  int rows{ 100 };
+  int cols{ 100 };
   std::vector<std::vector<int>> cells;
-
   uint32_t generations{ 0 };
 
   void initialize_map(int rows, int cols) {

@@ -12,13 +12,19 @@ enum class Speed {
   X8 = 8,
 };
 
+const int CELL_SIZE = 10;
+const int CAMERA_W = 800;
+const int CAMERA_H = 640;
+const int VIEWPORT_W = 800;
+const int VIEWPORT_H = 640;
+
 class GameMap {
 public:
   GameMap() {
-    cells_map = CellsMap(rows, cols);
+    cells_map = CellsMap();
   }
 
-  GameMap(int rows, int cols): rows(rows), cols(cols) {
+  GameMap(int rows, int cols) {
     cells_map = CellsMap(rows, cols);
   }
 
@@ -53,16 +59,13 @@ public:
 
     // draw cells
     auto cells = cells_map.get_cells();
-    size_t rows = cells.size();
-    size_t cols = cells.size() >= 1 ? cells[0].size() : 0;
-
-    for (size_t i = 0; i < rows; i++) {
-      for (size_t j = 0; j < cols; j++) {
+    for (int i = 0; i < cells_map.get_rows(); i++) {
+      for (int j = 0; j < cells_map.get_cols(); j++) {
         Rect dstrect{
           .x = 10 * (int)j + 1 + offset.x,
           .y = 10 * (int)i + 1 + offset.y,
-          .w = (int)cell_size - 2,
-          .h = (int)cell_size - 2,
+          .w = (int)CELL_SIZE - 2,
+          .h = (int)CELL_SIZE - 2,
         };
 
         if (cells[i][j]) { // cell is alive
@@ -145,34 +148,69 @@ public:
     }
 
     // move camera z (z is a virtual property, map it to camera.w and camera.h)
-    float zoom = 1 + 0.1 * offset_z;
-    float zoom_rate = (camera->w * zoom) / 800;
-    if (zoom_rate >= 0.5 && zoom_rate <= 2.0) {
-      camera->w *= zoom;
-      camera->h *= zoom;
+    if (offset_z != 0) {
+      Point mouse1 = get_mouse();
+
+      float zoom = 1 + 0.1 * offset_z;
+      float zoom_rate = (camera->w * zoom) / CAMERA_W;
+      if (zoom_rate >= 0.5 && zoom_rate <= 2.0) {
+        camera->w *= zoom;
+        camera->h *= zoom;
+      }
+
+      Point mouse2 = get_mouse();
+      if (mouse1.x > 0
+        && mouse1.x < CAMERA_W
+        && mouse2.x > 0
+        && mouse2.x < CAMERA_W) {
+        move_camera(mouse1.x - mouse2.x, 0);
+      }
+      if (mouse1.y > 0
+        && mouse1.y < CAMERA_H
+        && mouse2.y > 0
+        && mouse2.y < CAMERA_H) {
+        move_camera(0, mouse1.y - mouse2.y);
+      }
     }
   }
 
   int get_map_width() {
-    return cell_size * cols;
+    return CELL_SIZE * cells_map.get_cols();
   }
 
   int get_map_height() {
-    return cell_size * rows;
+    return CELL_SIZE * cells_map.get_rows();
   }
 
   uint32_t per_generation() {
     return per_generation_x1 / (int)speed;
   }
 
+  Point get_mouse() {
+    Point mouse{ 0, 0 };
+
+    SDL_GetMouseState(&mouse.x, &mouse.y);
+
+    if (viewport) {
+      mouse.x -= viewport->x;
+      mouse.y -= viewport->y;
+    }
+
+    if (camera && viewport) {
+      float scale_x = static_cast<float>(viewport->w) / camera->w;
+      float scale_y = static_cast<float>(viewport->h) / camera->h;
+      mouse.x /= scale_x;
+      mouse.y /= scale_y;
+    }
+
+    return mouse;
+  }
+
 private:
-  uint32_t rows{ 100 };
-  uint32_t cols{ 100 };
-  uint32_t cell_size{ 10 };
   CellsMap cells_map;
 
-  std::unique_ptr<Rect> camera = std::make_unique<Rect>(Rect{0, 0, 800, 640});
-  std::unique_ptr<Rect> viewport = std::make_unique<Rect>(Rect{0, 0, 800, 640});
+  std::unique_ptr<Rect> camera = std::make_unique<Rect>(Rect{0, 0, CAMERA_W, CAMERA_H});
+  std::unique_ptr<Rect> viewport = std::make_unique<Rect>(Rect{0, 0, VIEWPORT_W, VIEWPORT_H});
 
   bool pause{ false };
   uint32_t last_update{ 0 };
