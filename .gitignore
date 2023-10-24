@@ -1,4 +1,7 @@
 *.zip
 *.dll
 *.exe
+*.a
+*.o
 bin/
+obj/
