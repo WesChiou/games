@@ -1,4 +1,5 @@
 #include <SDL2/SDL_image.h>
+#include <iostream>
 #include <fstream>
 #include "../include/nlohmann/json.hpp"
 #include "../include/TextureManager.hpp"
@@ -9,15 +10,16 @@ TextureManager::TextureManager(HRDR hrdr, std::string texture_region_config): hr
   if (texture_region_config.size()) {
     load_texture_regions(texture_region_config);
   }
+  std::cout << "TextureManager" << std::endl;
 }
 
 TextureManager::~TextureManager() {
-
+  std::cout << "~TextureManager" << std::endl;
 }
 
 std::optional<TextureRegion> TextureManager::get_texture_region(uint32_t id) {
-  if (tr_map.contains(id)) {
-    return tr_map[id];
+  if (texture_region_map.contains(id)) {
+    return texture_region_map[id];
   }
   return std::nullopt;
 }
@@ -27,7 +29,7 @@ std::optional<HTEX> TextureManager::create_label(std::string text, const FontSty
   if (!hfont_map.contains(font_style.source)) {
     TTF_Font* font = TTF_OpenFont(font_style.source.c_str(), font_style.size);
     if (!font) {
-      // TODO: logger
+      // TODO(weishi): logger
       return std::nullopt;
     }
     HFONT hfont { font, TTF_CloseFont };
@@ -61,14 +63,14 @@ std::optional<HTEX> TextureManager::create_label(std::string text, const FontSty
       break;
   }
   if (!surface) {
-    // TODO: logger
+    // TODO(weishi): logger
     return std::nullopt;
   }
 
   SDL_Texture* texture = SDL_CreateTextureFromSurface(hrdr.get(), surface);
   SDL_FreeSurface(surface);
   if (!texture) {
-    // TODO: logger
+    // TODO(weishi): logger
     return std::nullopt;
   }
 
@@ -85,7 +87,7 @@ std::optional<HTEX> TextureManager::get_htex(std::string file) {
   // auto htex = load_texture(file);
   SDL_Texture* texture = IMG_LoadTexture(hrdr.get(), file.c_str());
   if (!texture) {
-    // TODO: logger
+    // TODO(weishi): logger
     return std::nullopt;
   }
   HTEX htex{ texture, SDL_DestroyTexture };
@@ -102,7 +104,7 @@ void TextureManager::load_texture_regions(std::string texture_region_config) {
   for (auto v : data) {
     auto htex = get_htex(v["file_path"]);
     if (htex.has_value()) {
-      tr_map[v["id"]] = {
+      texture_region_map[v["id"]] = {
         .htex = htex.value(),
         .region = SDL_Rect{
           .x = v["srcrect"][0],

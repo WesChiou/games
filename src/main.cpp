@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <memory>
 #include <stdexcept>
 #include <cmath>
 #include <random>
@@ -11,11 +12,14 @@
 #include <optional>
 #include "../include/nlohmann/json.hpp"
 #include "../include/alias.hpp"
+#include "../include/userevent.hpp"
 #include "../include/TextureRegion.hpp"
 #include "../include/TextureManager.hpp"
 #include "../include/FontStyle.hpp"
-
-using json = nlohmann::json;
+#include "../include/State.hpp"
+#include "../include/StateOfStartMenu.hpp"
+#include "../include/StateOfPauseMenu.hpp"
+#include "../include/StateOfExampleGame.hpp"
 
 int main(int argc, char *args[]) {
   // Initialize SDL, SDL_image, etc.
@@ -37,28 +41,20 @@ int main(int argc, char *args[]) {
   HWND hwnd{ window, SDL_DestroyWindow };
 
   // Create Renderer.
-  SDL_Renderer* renderer = SDL_CreateRenderer(hwnd.get(), -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
+  SDL_Renderer* renderer = SDL_CreateRenderer(hwnd.get(), -1, SDL_RENDERER_ACCELERATED);  // SDL_RENDERER_PRESENTVSYNC
   if (!renderer) {
     throw std::runtime_error("SDL_CreateRenderer Has Failed: " + std::string(SDL_GetError()));
   }
   HRDR hrdr{ renderer, SDL_DestroyRenderer };
 
-  TextureManager texture_manager{ hrdr, "res/textureregions.json" };
+  std::shared_ptr<TextureManager> texture_manager = std::make_shared<TextureManager>(hrdr, "res/textureregions.json");
 
-  FontStyle alibabafont {
-    .source = "res/AlibabaPuHuiTi/AlibabaPuHuiTi-3-55-Regular.ttf",
-    .render_mode = FontRenderMode::Blended,
-    .fg = { 255, 255, 255, 255 },
-    .bg = { 25, 95, 125, 255 },
-    .size = 24,
-    // .outline = 1,
-    .align = TTF_WRAPPED_ALIGN_CENTER,
-    // .style = TTF_STYLE_UNDERLINE,
-    .wrap_length = 160,
-  };
-  std::optional<HTEX> three_kingdom_label = texture_manager.create_label("话说天下大势，分久必合，合久必分。", alibabafont);
-  std::optional<HTEX> continue_game_label = texture_manager.create_label("继续游戏", alibabafont);
-  std::optional<HTEX> new_game_label = texture_manager.create_label("新游戏", alibabafont);
+  StateManager state_manager;
+
+  state_manager.add_state({
+    .state = std::make_shared<StateOfStartMenu>(hrdr, texture_manager),
+    .unique_name = "startmenu",
+  });
 
   // Game loop stuff.
   uint32_t fps_expected{ 60 };
@@ -76,67 +72,25 @@ int main(int argc, char *args[]) {
         quit = true;
         break;
       }
+
+      if (event.type == SDL_USEREVENT) {
+        if (event.user.code == static_cast<int>(userevent::Code::quit)) {
+          quit = true;
+          break;
+        }
+      }
+
+      state_manager.handle_event(event);
     }
 
     // Update
-    {
-      alibabafont.fg.b++;
-      if (alibabafont.fg.b > 255) {
-        alibabafont.fg.b = 0;
-      }
-    }
+    state_manager.update();
 
     // Draw
     SDL_SetRenderDrawColor(hrdr.get(), 0, 0, 0, 0);
     SDL_RenderClear(hrdr.get());
     // -----Draw Start-----
-    // Draw test tileset.
-    for (int id = 1; id <= 57; id++) {
-      std::optional<TextureRegion> tr = texture_manager.get_texture_region(id);
-      if (tr.has_value()) {
-        SDL_RenderCopy(hrdr.get(), tr.value().htex.get(), &tr.value().region, &tr.value().region);
-      }
-    }
-
-    // Draw menu.
-    const SDL_Rect rect_menu{ 150, 150, 340, 180 };
-    SDL_SetRenderDrawColor(hrdr.get(), 173, 216, 230, 255);
-    SDL_RenderFillRect(hrdr.get(), &rect_menu);
-    SDL_SetRenderDrawColor(hrdr.get(), 255, 255, 255, 255);
-    SDL_RenderDrawRect(hrdr.get(), &rect_menu);
-
-    SDL_Rect rect_continue_game{ 150 + 20, 150 + 20, 200, 50 };
-    SDL_SetRenderDrawColor(hrdr.get(), 25, 95, 125, 255);
-    SDL_RenderFillRect(hrdr.get(), &rect_continue_game);
-    if (continue_game_label.has_value()) {
-      SDL_Rect dstrect{ rect_continue_game.x, rect_continue_game.y, 0, 0 };
-      SDL_QueryTexture(continue_game_label.value().get(), NULL, NULL, &dstrect.w, &dstrect.h);
-      SDL_RenderCopy(hrdr.get(), continue_game_label.value().get(), nullptr, &dstrect);
-    }
-
-    SDL_Rect rect_new_game{ 150 + 20, 150 + 20 + 50 + 20, 200, 50 };
-    SDL_SetRenderDrawColor(hrdr.get(), 25, 95, 125, 255);
-    SDL_RenderFillRect(hrdr.get(), &rect_new_game);
-    if (new_game_label.has_value()) {
-      SDL_Rect dstrect{ rect_new_game.x, rect_new_game.y, 0, 0 };
-      SDL_QueryTexture(new_game_label.value().get(), NULL, NULL, &dstrect.w, &dstrect.h);
-      SDL_RenderCopy(hrdr.get(), new_game_label.value().get(), nullptr, &dstrect);
-    }
-
-    // Draw fps.
-    auto fps_label = texture_manager.create_label(std::to_string(fps_realtime), alibabafont);
-    if (fps_label.has_value()) {
-      SDL_Rect dstrect{ 500, 0, 0, 0 };
-      SDL_QueryTexture(fps_label.value().get(), NULL, NULL, &dstrect.w, &dstrect.h);
-      SDL_RenderCopy(hrdr.get(), fps_label.value().get(), nullptr, &dstrect);
-    }
-
-    // Draw test label.
-    if (three_kingdom_label.has_value()) {
-      SDL_Rect dstrect{ 0, 380, 200, 200 };
-      SDL_QueryTexture(three_kingdom_label.value().get(), NULL, NULL, &dstrect.w, &dstrect.h);
-      SDL_RenderCopy(hrdr.get(), three_kingdom_label.value().get(), nullptr, &dstrect);
-    }
+    state_manager.render();
     // -----Draw End-----
     SDL_RenderPresent(hrdr.get());
 

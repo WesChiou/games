@@ -24,3 +24,9 @@ clean:
 	@echo For windows: Use Git Bash to run this but not PowerShell.
 	@echo -------------------------------------------------------------
 	-rm -rf obj/*.o $(TARGET)
+
+
+# Lint code style by cpplint
+lint:
+	find . -name \*.hpp -or -name \*.cpp | grep -v 'include/nlohmann/json.hpp' | xargs cpplint --filter=-legal/copyright,-whitespace/indent,-whitespace/line_length,-runtime/references
+
