@@ -30,10 +30,10 @@ private:
     // .style = TTF_STYLE_UNDERLINE,
     .wrap_length = 160,
   };
-  SDL_Rect rect_new_game{ 20, 20, 200, 50 };
-  SDL_Rect rect_quit_game{ 20, 20 + 50 + 20, 200, 50 };
-  HTEX new_game_label;
-  HTEX quit_game_label;
+  SDL_Rect rect_examplegame{ 20, 20, 200, 50 };
+  SDL_Rect rect_quit{ 20, 20 + 50 + 20, 200, 50 };
+  HTEX label_examplegame;
+  HTEX label_quit;
   HRDR hrdr;
   std::shared_ptr<TextureManager> texture_manager;
 };

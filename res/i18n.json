@@ -1,0 +1,18 @@
+{
+  "zh": {
+    "startmenu_examplegame": "示例游戏",
+    "startmenu_quit": "退出",
+    "pausemenu_continue": "继续游戏",
+    "pausemenu_newgame": "新游戏",
+    "pausemenu_backtostartmenu": "主菜单",
+    "__end__": ""
+  },
+  "en": {
+    "startmenu_examplegame": "ExampleGame",
+    "startmenu_quit": "Quit",
+    "pausemenu_continue": "Continue",
+    "pausemenu_newgame": "New Game",
+    "pausemenu_backtostartmenu": "Back To Main Menu",
+    "__end__": ""
+  }
+}

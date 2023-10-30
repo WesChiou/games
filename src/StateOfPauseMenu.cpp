@@ -14,17 +14,17 @@ StateOfPauseMenu::~StateOfPauseMenu() {
 }
 
 void StateOfPauseMenu::load() {
-  std::optional<HTEX> op_continue_game_label = texture_manager->create_label("继续游戏", alibabafont);
+  std::optional<HTEX> op_continue_game_label = texture_manager->create_i18n_label("zh", "pausemenu_continue", alibabafont);
   if (op_continue_game_label.has_value()) {
     continue_game_label = op_continue_game_label.value();
   }
 
-  std::optional<HTEX> op_new_game_label = texture_manager->create_label("新游戏", alibabafont);
+  std::optional<HTEX> op_new_game_label = texture_manager->create_i18n_label("zh", "pausemenu_newgame", alibabafont);
   if (op_new_game_label.has_value()) {
     new_game_label = op_new_game_label.value();
   }
 
-  std::optional<HTEX> op_back_startmenu_label = texture_manager->create_label("主菜单", alibabafont);
+  std::optional<HTEX> op_back_startmenu_label = texture_manager->create_i18n_label("zh", "pausemenu_backtostartmenu", alibabafont);
   if (op_back_startmenu_label.has_value()) {
     back_startmenu_label = op_back_startmenu_label.value();
   }
@@ -117,6 +117,17 @@ void StateOfPauseMenu::render() {
     SDL_Rect dstrect{ rect_back_startmenu.x, rect_back_startmenu.y, 0, 0 };
     SDL_QueryTexture(back_startmenu_label.get(), NULL, NULL, &dstrect.w, &dstrect.h);
     SDL_RenderCopy(hrdr.get(), back_startmenu_label.get(), nullptr, &dstrect);
+  }
+
+  SDL_Point mouse{ 0, 0 };
+  SDL_GetMouseState(&mouse.x, &mouse.y);
+  SDL_SetRenderDrawColor(hrdr.get(), 255, 255, 255, 255);
+  if (SDL_PointInRect(&mouse, &rect_new_game)) {
+    SDL_RenderDrawRect(hrdr.get(), &rect_new_game);
+  } else if (SDL_PointInRect(&mouse, &rect_continue_game)) {
+    SDL_RenderDrawRect(hrdr.get(), &rect_continue_game);
+  } else if (SDL_PointInRect(&mouse, &rect_back_startmenu)) {
+    SDL_RenderDrawRect(hrdr.get(), &rect_back_startmenu);
   }
 }
 

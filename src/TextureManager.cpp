@@ -6,9 +6,12 @@
 
 using json = nlohmann::json;
 
-TextureManager::TextureManager(HRDR hrdr, std::string texture_region_config): hrdr(hrdr) {
+TextureManager::TextureManager(HRDR hrdr, std::string texture_region_config, std::string i18n_config): hrdr(hrdr) {
   if (texture_region_config.size()) {
     load_texture_regions(texture_region_config);
+  }
+  if (i18n_config.size()) {
+    load_i18n_config(i18n_config);
   }
   std::cout << "TextureManager" << std::endl;
 }
@@ -79,6 +82,13 @@ std::optional<HTEX> TextureManager::create_label(std::string text, const FontSty
   return htex;
 }
 
+std::optional<HTEX> TextureManager::create_i18n_label(std::string i18n_group, std::string i18n_key, const FontStyle& font_style) {
+  if (i18n_data.contains(i18n_group) && i18n_data[i18n_group].contains(i18n_key)) {
+    return create_label(i18n_data[i18n_group][i18n_key], font_style);
+  }
+  return create_label(i18n_key, font_style);
+}
+
 std::optional<HTEX> TextureManager::get_htex(std::string file) {
   if (htex_map.contains(file)) {
     return htex_map[file];
@@ -115,4 +125,10 @@ void TextureManager::load_texture_regions(std::string texture_region_config) {
       };
     }
   }
+}
+
+void TextureManager::load_i18n_config(std::string i18n_config) {
+  std::ifstream file(i18n_config);
+  i18n_data = json::parse(file);
+  file.close();
 }

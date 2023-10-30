@@ -47,7 +47,7 @@ int main(int argc, char *args[]) {
   }
   HRDR hrdr{ renderer, SDL_DestroyRenderer };
 
-  std::shared_ptr<TextureManager> texture_manager = std::make_shared<TextureManager>(hrdr, "res/textureregions.json");
+  std::shared_ptr<TextureManager> texture_manager = std::make_shared<TextureManager>(hrdr, "res/textureregions.json", "res/i18n.json");
 
   StateManager state_manager;
 
