@@ -1,6 +1,6 @@
 #include <iostream>
 #include "../include/StateOfExampleGame.hpp"
-#include "../include/StateOfPauseMenu.hpp"
+#include "../include/StateOfExampleGameMenu.hpp"
 
 StateOfExampleGame::StateOfExampleGame(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager)
 : hrdr(hrdr), texture_manager(texture_manager) {
@@ -30,8 +30,8 @@ void StateOfExampleGame::handle_event(SDL_Event& event, StateManager& state_mana
                 .should_update = false,
               });
               state_manager.add_state({
-                .state = std::make_shared<StateOfPauseMenu>(hrdr, texture_manager),
-                .unique_name = "pausemenu",
+                .state = std::make_shared<StateOfExampleGameMenu>(hrdr, texture_manager),
+                .unique_name = "examplegamemenu",
               });
             }
             break;

@@ -340,5 +340,53 @@
     "file_path": "res/grass_tileset_16x16/grass_tileset_16x16.png",
     "srcrect": [48, 128, 16, 16],
     "description": ""
+  },
+  {
+    "id": 58,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [0, 0, 16, 16],
+    "description": ""
+  },
+  {
+    "id": 59,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [16, 0, 16, 16],
+    "description": ""
+  },
+  {
+    "id": 60,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [32, 0, 16, 16],
+    "description": ""
+  },
+  {
+    "id": 61,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [48, 0, 16, 16],
+    "description": ""
+  },
+  {
+    "id": 62,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [0, 16, 16, 16],
+    "description": ""
+  },
+  {
+    "id": 63,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [16, 16, 16, 16],
+    "description": ""
+  },
+  {
+    "id": 64,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [32, 16, 16, 16],
+    "description": ""
+  },
+  {
+    "id": 65,
+    "file_path": "res/lifegame/speed.png",
+    "srcrect": [48, 16, 16, 16],
+    "description": ""
   }
 ]

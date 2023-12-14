@@ -18,7 +18,7 @@
 #include "../include/FontStyle.hpp"
 #include "../include/State.hpp"
 #include "../include/StateOfStartMenu.hpp"
-#include "../include/StateOfPauseMenu.hpp"
+#include "../include/StateOfExampleGameMenu.hpp"
 #include "../include/StateOfExampleGame.hpp"
 
 int main(int argc, char *args[]) {

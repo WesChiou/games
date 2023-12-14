@@ -1,5 +1,5 @@
-#ifndef INCLUDE_STATEOFPAUSEMENU_HPP_
-#define INCLUDE_STATEOFPAUSEMENU_HPP_
+#ifndef INCLUDE_STATEOFLIFEGAMEMENU_HPP_
+#define INCLUDE_STATEOFLIFEGAMEMENU_HPP_
 
 #include <memory>
 #include "./alias.hpp"
@@ -7,10 +7,10 @@
 #include "./FontStyle.hpp"
 #include "./State.hpp"
 
-class StateOfPauseMenu : public State {
+class StateOfLifeGameMenu : public State {
 public:
-  StateOfPauseMenu(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager);
-  ~StateOfPauseMenu();
+  StateOfLifeGameMenu(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager);
+  ~StateOfLifeGameMenu();
   void load();
   void handle_event(SDL_Event& event, StateManager& state_manager);
   void update();
@@ -39,4 +39,4 @@ private:
   std::shared_ptr<TextureManager> texture_manager;
 };
 
-#endif  // INCLUDE_STATEOFPAUSEMENU_HPP_
+#endif  // INCLUDE_STATEOFLIFEGAMEMENU_HPP_

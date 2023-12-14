@@ -9,5 +9,7 @@ using HWND = std::shared_ptr<SDL_Window>;
 using HRDR = std::shared_ptr<SDL_Renderer>;
 using HTEX = std::shared_ptr<SDL_Texture>;
 using HFONT = std::shared_ptr<TTF_Font>;
+using Camera = SDL_Rect;
+using Viewport = SDL_Rect;
 
 #endif  // INCLUDE_ALIAS_HPP_

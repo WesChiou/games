@@ -1,17 +1,16 @@
-#ifndef INCLUDE_STATEOFSTARTMENU_HPP_
-#define INCLUDE_STATEOFSTARTMENU_HPP_
+#ifndef INCLUDE_STATEOFEXAMPLEGAMEMENU_HPP_
+#define INCLUDE_STATEOFEXAMPLEGAMEMENU_HPP_
 
-#include <SDL2/SDL.h>
 #include <memory>
 #include "./alias.hpp"
 #include "./TextureManager.hpp"
 #include "./FontStyle.hpp"
 #include "./State.hpp"
 
-class StateOfStartMenu : public State {
+class StateOfExampleGameMenu : public State {
 public:
-  StateOfStartMenu(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager);
-  ~StateOfStartMenu();
+  StateOfExampleGameMenu(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager);
+  ~StateOfExampleGameMenu();
   void load();
   void handle_event(SDL_Event& event, StateManager& state_manager);
   void update();
@@ -30,14 +29,14 @@ private:
     // .style = TTF_STYLE_UNDERLINE,
     .wrap_length = 160,
   };
-  SDL_Rect rect_examplegame{ 20, 20, 200, 30 };
-  SDL_Rect rect_lifegame{ 20, 20 + 30 + 20, 200, 30 };
-  SDL_Rect rect_quit{ 20, 20 + 30 + 20 + 30 + 20, 200, 30 };
-  HTEX label_examplegame;
-  HTEX label_lifegame;
-  HTEX label_quit;
+  SDL_Rect rect_continue_game{ 170, 170, 200, 30 };
+  SDL_Rect rect_new_game{ 170, 170 + 50, 200, 30 };
+  SDL_Rect rect_back_startmenu{ 170, 170 + 50 + 50, 200, 30 };
+  HTEX continue_game_label;
+  HTEX new_game_label;
+  HTEX back_startmenu_label;
   HRDR hrdr;
   std::shared_ptr<TextureManager> texture_manager;
 };
 
-#endif  // INCLUDE_STATEOFSTARTMENU_HPP_
+#endif  // INCLUDE_STATEOFEXAMPLEGAMEMENU_HPP_

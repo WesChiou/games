@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "../include/userevent.hpp"
 #include "../include/StateOfStartMenu.hpp"
+#include "../include/StateOfLifeGame.hpp"
 #include "../include/StateOfExampleGame.hpp"
 
 StateOfStartMenu::StateOfStartMenu(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager)
@@ -18,6 +19,11 @@ void StateOfStartMenu::load() {
   std::optional<HTEX> op_label_quit = texture_manager->create_i18n_label("zh", "startmenu_quit", alibabafont);
   if (op_label_quit.has_value()) {
     label_quit = op_label_quit.value();
+  }
+
+  std::optional<HTEX> op_label_lifegame = texture_manager->create_i18n_label("zh", "startmenu_lifegame", alibabafont);
+  if (op_label_lifegame.has_value()) {
+    label_lifegame = op_label_lifegame.value();
   }
 
   std::optional<HTEX> op_label_examplegame = texture_manager->create_i18n_label("zh", "startmenu_examplegame", alibabafont);
@@ -52,6 +58,14 @@ void StateOfStartMenu::handle_event(SDL_Event& event, StateManager& state_manage
               .state = std::make_shared<StateOfExampleGame>(hrdr, texture_manager),
               .unique_name = "examplegame",
             });
+          } else if (SDL_PointInRect(&p, &rect_lifegame)) {
+            state_manager.edit_state("startmenu", {
+              .need_to_fuse = true,
+            });
+            state_manager.add_state({
+              .state = std::make_shared<StateOfLifeGame>(hrdr, texture_manager),
+              .unique_name = "lifegame",
+            });
           } else if (SDL_PointInRect(&p, &rect_quit)) {
             userevent::trigger(userevent::Code::quit, nullptr, nullptr);
           }
@@ -80,6 +94,14 @@ void StateOfStartMenu::render() {
   }
 
   SDL_SetRenderDrawColor(hrdr.get(), 25, 95, 125, 255);
+  SDL_RenderFillRect(hrdr.get(), &rect_lifegame);
+  if (label_lifegame) {
+    SDL_Rect dstrect{ rect_lifegame.x, rect_lifegame.y, 0, 0 };
+    SDL_QueryTexture(label_lifegame.get(), NULL, NULL, &dstrect.w, &dstrect.h);
+    SDL_RenderCopy(hrdr.get(), label_lifegame.get(), nullptr, &dstrect);
+  }
+
+  SDL_SetRenderDrawColor(hrdr.get(), 25, 95, 125, 255);
   SDL_RenderFillRect(hrdr.get(), &rect_quit);
   if (label_quit) {
     SDL_Rect dstrect{ rect_quit.x, rect_quit.y, 0, 0 };
@@ -92,6 +114,8 @@ void StateOfStartMenu::render() {
   SDL_SetRenderDrawColor(hrdr.get(), 255, 255, 255, 255);
   if (SDL_PointInRect(&mouse, &rect_examplegame)) {
     SDL_RenderDrawRect(hrdr.get(), &rect_examplegame);
+  } else if (SDL_PointInRect(&mouse, &rect_lifegame)) {
+    SDL_RenderDrawRect(hrdr.get(), &rect_lifegame);
   } else if (SDL_PointInRect(&mouse, &rect_quit)) {
     SDL_RenderDrawRect(hrdr.get(), &rect_quit);
   }

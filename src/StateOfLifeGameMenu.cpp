@@ -1,19 +1,19 @@
 #include <iostream>
 #include <memory>
 #include "../include/StateOfStartMenu.hpp"
-#include "../include/StateOfExampleGame.hpp"
-#include "../include/StateOfPauseMenu.hpp"
+#include "../include/StateOfLifeGame.hpp"
+#include "../include/StateOfLifeGameMenu.hpp"
 
-StateOfPauseMenu::StateOfPauseMenu(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager)
+StateOfLifeGameMenu::StateOfLifeGameMenu(HRDR hrdr, std::shared_ptr<TextureManager> texture_manager)
 : hrdr(hrdr), texture_manager(texture_manager) {
-  std::cout << "StateOfPauseMenu" << std::endl;
+  std::cout << "StateOfLifeGameMenu" << std::endl;
 }
 
-StateOfPauseMenu::~StateOfPauseMenu() {
-  std::cout << "~StateOfPauseMenu" << std::endl;
+StateOfLifeGameMenu::~StateOfLifeGameMenu() {
+  std::cout << "~StateOfLifeGameMenu" << std::endl;
 }
 
-void StateOfPauseMenu::load() {
+void StateOfLifeGameMenu::load() {
   std::optional<HTEX> op_continue_game_label = texture_manager->create_i18n_label("zh", "pausemenu_continue", alibabafont);
   if (op_continue_game_label.has_value()) {
     continue_game_label = op_continue_game_label.value();
@@ -30,17 +30,17 @@ void StateOfPauseMenu::load() {
   }
 }
 
-void StateOfPauseMenu::handle_event(SDL_Event& event, StateManager& state_manager) {
+void StateOfLifeGameMenu::handle_event(SDL_Event& event, StateManager& state_manager) {
   switch (event.type) {
     case SDL_KEYDOWN:
       {
         switch (event.key.keysym.sym) {
           case SDLK_ESCAPE:
             {
-              state_manager.edit_state("pausemenu", {
+              state_manager.edit_state("lifegamemenu", {
                 .need_to_fuse = true,
               });
-              state_manager.edit_state("examplegame", {});
+              state_manager.edit_state("lifegame", {});
             }
             break;
           default:
@@ -54,23 +54,23 @@ void StateOfPauseMenu::handle_event(SDL_Event& event, StateManager& state_manage
           SDL_Point p{ event.button.x, event.button.y };
 
           if (SDL_PointInRect(&p, &rect_continue_game)) {
-            state_manager.edit_state("pausemenu", {
+            state_manager.edit_state("lifegamemenu", {
               .need_to_fuse = true,
             });
-            state_manager.edit_state("examplegame", {});
+            state_manager.edit_state("lifegame", {});
           } else if (SDL_PointInRect(&p, &rect_new_game)) {
-            state_manager.edit_state("pausemenu", {
+            state_manager.edit_state("lifegamemenu", {
               .need_to_fuse = true,
             });
             state_manager.add_state({
-              .state = std::make_shared<StateOfExampleGame>(hrdr, texture_manager),
-              .unique_name = "examplegame",
+              .state = std::make_shared<StateOfLifeGame>(hrdr, texture_manager),
+              .unique_name = "lifegame",
             });
           } else if (SDL_PointInRect(&p, &rect_back_startmenu)) {
-            state_manager.edit_state("pausemenu", {
+            state_manager.edit_state("lifegamemenu", {
               .need_to_fuse = true,
             });
-            state_manager.edit_state("examplegame", {
+            state_manager.edit_state("lifegame", {
               .need_to_fuse = true,
             });
             state_manager.add_state({
@@ -86,10 +86,10 @@ void StateOfPauseMenu::handle_event(SDL_Event& event, StateManager& state_manage
   }
 }
 
-void StateOfPauseMenu::update() {
+void StateOfLifeGameMenu::update() {
 }
 
-void StateOfPauseMenu::render() {
+void StateOfLifeGameMenu::render() {
   const SDL_Rect rect_menu{ 150, 150, 340, 180 };
   SDL_SetRenderDrawColor(hrdr.get(), 173, 216, 230, 255);
   SDL_RenderFillRect(hrdr.get(), &rect_menu);
@@ -131,6 +131,6 @@ void StateOfPauseMenu::render() {
   }
 }
 
-void StateOfPauseMenu::unload() {
-  std::cout << "StateOfPauseMenu unload()" << std::endl;
+void StateOfLifeGameMenu::unload() {
+  std::cout << "StateOfLifeGameMenu unload()" << std::endl;
 }
